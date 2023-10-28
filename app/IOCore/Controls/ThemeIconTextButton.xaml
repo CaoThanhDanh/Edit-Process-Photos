@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<UserControl
+    x:Class="IOCore.Controls.ThemeIconTextButton"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+>
+    <Button x:Name="XButton"
+            Height="{x:Bind ButtonHeight}" CornerRadius="{x:Bind ButtonCornerRadius}"
+            Padding="0" HorizontalAlignment="{x:Bind HorizontalAlignment}"
+            BorderThickness="0"
+            Flyout="{x:Bind Flyout}" Click="XButton_Click">
+        <Grid ColumnDefinitions="Auto,*">
+            <Border Width="{x:Bind IconBoxWidth}" Visibility="{x:Bind IconVisibility}">
+                <FontIcon Glyph="{x:Bind Icon, Mode=OneWay}" FontSize="{x:Bind IconSize}"
+                          VerticalAlignment="Center" HorizontalAlignment="Right"/>
+            </Border>
+            <TextBlock Grid.Column="1" Text="{x:Bind Text, Mode=OneWay}" FontSize="{x:Bind TextSize}" Margin="{x:Bind TextPadding}"
+                       VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        </Grid>
+        <Button.Resources>
+            <ResourceDictionary>
+                <ResourceDictionary.ThemeDictionaries>
+                    <ResourceDictionary x:Key="Default">
+                        <StaticResource x:Key="ButtonForeground" ResourceKey="ThemeForeground"/>
+                        <StaticResource x:Key="ButtonBackground" ResourceKey="Theme"/>
+                        <StaticResource x:Key="ButtonForegroundPointerOver" ResourceKey="ThemeForeground"/>
+                        <StaticResource x:Key="ButtonBackgroundPointerOver" ResourceKey="Theme"/>
+                        <StaticResource x:Key="ButtonForegroundPressed" ResourceKey="ThemeForeground"/>
+                        <StaticResource x:Key="ButtonBackgroundPressed" ResourceKey="Theme"/>
+                        <StaticResource x:Key="ButtonForegroundDisabled" ResourceKey="ThemeForeground"/>
+                    </ResourceDictionary>
+                </ResourceDictionary.ThemeDictionaries>
+            </ResourceDictionary>
+        </Button.Resources>
+    </Button>
+</UserControl>

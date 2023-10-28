@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="IOCore.Pages.Support"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:coreLibs="using:IOCore.Libs"
+    xmlns:coreControls="using:IOCore.Controls"
+    mc:Ignorable="d"
+>
+    <Grid Width="500">
+        <StackPanel Padding="15" Spacing="15">
+            <Grid ColumnDefinitions="90,*" ColumnSpacing="15">
+                <FontIcon Glyph="&#xE15E;" FontSize="60"/>
+
+                <StackPanel Grid.Column="1" Spacing="5">
+                    <TextBlock Text="{coreLibs:SRE K=Support_HelpAndSupport}" FontSize="20" FontWeight="Bold"/>
+                    <TextBlock Text="{coreLibs:SRE K=Support_HelpAndSupportDescription}" TextWrapping="WrapWholeWords" FontSize="14"/>
+                </StackPanel>
+            </Grid>
+
+            <StackPanel VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Spacing="15">
+                <StackPanel Spacing="10">
+                    <TextBlock Text="{coreLibs:SRE K=Support_YourEmail}" FontSize="11" FontWeight="Bold"/>
+                    <TextBox Name="EmailTextBox" PlaceholderText="{coreLibs:SRE K=Support_YourEmailHint}"/>
+                </StackPanel>
+                <StackPanel Spacing="10">
+                    <TextBlock Text="{coreLibs:SRE K=Support_Description}" FontSize="11" FontWeight="Bold"/>
+                    <TextBox Name="DescriptionTextBox" PlaceholderText="{coreLibs:SRE K=Support_DescriptionHint}"
+                             TextWrapping="Wrap" AcceptsReturn="True" MinHeight="80" MaxHeight="80"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Spacing="5">
+                    <TextBlock Text="{coreLibs:SRE K=Support_SupportFor}"/>
+                    <TextBlock Text="{Binding AppName}" FontWeight="Bold"/>
+                </StackPanel>
+                <coreControls:ThemeIconTextButton x:Name="SendButton" Icon="&#xE724;" Text="{coreLibs:SRE K=Support_Send}" Size="LG" HorizontalAlignment="Stretch" Click="SendButton_Click"/>
+                <TextBlock Text="{coreLibs:SRE K=Support_OtherSupportMethod}" TextWrapping="WrapWholeWords" Foreground="{ThemeResource Foreground2}" FontSize="14"/>
+            </StackPanel>
+        </StackPanel>
+
+        <coreControls:IconButton Icon="&#xE711;" IsSquare="True" Corner="None" Variant="Text" Click="CloseButton_Click"
+                                 VerticalAlignment="Top" HorizontalAlignment="Right"/>
+    </Grid>
+</Page>

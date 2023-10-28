@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<UserControl
+    x:Class="IOCore.Controls.EmptyList"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+>
+    <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="10">
+        <FontIcon Glyph="{x:Bind Icon, Mode=OneWay}" FontSize="72" Foreground="{ThemeResource Foreground2}"/>
+        <TextBlock Text="{x:Bind Text, Mode=OneWay}" Foreground="{ThemeResource Foreground2}" TextAlignment="Center"/>
+    </StackPanel>
+</UserControl>

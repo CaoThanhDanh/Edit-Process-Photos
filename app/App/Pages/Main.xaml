@@ -1,0 +1,182 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="IOApp.Pages.Main"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:coreLibs="using:IOCore.Libs"
+    xmlns:coreControls="using:IOCore.Controls"
+    mc:Ignorable="d"
+    NavigationCacheMode="Enabled"
+    Loaded="Page_Loaded"
+    KeyboardAcceleratorPlacementMode="Hidden"
+>
+    <Page.Resources>
+        <coreLibs:IndexMarginConverter x:Key="IndexMarginConverter"/>
+        <coreLibs:IsNullConverter x:Key="IsNullConverter"/>
+        <coreLibs:EnumComparisonToBoolConverter x:Key="EnumComparisonToBoolConverter"/>
+        <coreLibs:EnumComparisonToBoolInverseConverter x:Key="EnumComparisonToBoolInverseConverter"/>
+        <coreLibs:FileSizeToSizeStringConverter x:Key="FileSizeToSizeStringConverter"/>
+        <coreLibs:FilePathConverter x:Key="FilePathConverter"/>
+        <coreLibs:InverseBoolConverter x:Key="InverseBoolConverter"/>
+
+        <MenuFlyout x:Key="ShapeMenuFlyout" Placement="Bottom">
+            <RadioMenuFlyoutItem Name="LineShapeMenuFlyoutItem" Click="ShapeButton_Click"/>
+            <RadioMenuFlyoutItem Name="RectangleShapeMenuFlyoutItem" Click="ShapeButton_Click"/>
+            <RadioMenuFlyoutItem Name="EllipseShapeMenuFlyoutItem" Click="ShapeButton_Click"/>
+        </MenuFlyout>
+
+        <Flyout x:Key="SettingsFlyout" Placement="Bottom">
+            <StackPanel>
+                <StackPanel Name="Slider" Spacing="8" Orientation="Horizontal">
+                    <TextBlock FontSize="12" Foreground="{ThemeResource Foreground2}" Text="Size" VerticalAlignment="Center"/>
+                    <Slider Name="SliderThickness" Minimum="5" Maximum="50" Width="100" Value ="20"/>
+                </StackPanel>
+                
+                <StackPanel Spacing="8" Orientation="Horizontal">
+                    <TextBlock FontSize="12" Foreground="{ThemeResource Foreground2}" Text="Color" VerticalAlignment="Center"/>
+                    <SplitButton>
+                        <Border Name="SetColor" Width="24" Height="24" Background="{ThemeResource Theme}"/>
+                        <SplitButton.Flyout>
+                            <Flyout Placement="Bottom">
+                                <ColorPicker ColorSpectrumShape="Box" ColorChanged="ColorPicker_ColorChanged"/>
+                            </Flyout>
+                        </SplitButton.Flyout>
+                    </SplitButton>
+                </StackPanel>
+            </StackPanel>
+        </Flyout>
+
+        <MenuFlyout x:Key="ItemMoreMenuFlyout" Placement="Bottom">
+            <MenuFlyoutItem Icon="OpenFile" Text="{coreLibs:SRE K=RevealInFileExplorer}" Tag="RevealInFileExplorer" Click="MenuItemButton_Click"/>
+            <MenuFlyoutItem Icon="OpenWith" Text="{coreLibs:SRE K=OpenWithDefaultApp}" Tag="OpenWith" Click="MenuItemButton_Click"/>
+            <MenuFlyoutItem Icon="Cancel" Text="{coreLibs:SRE K=Features_RemoveItemFromList}" Tag="Remove" Click="MenuItemButton_Click"/>
+        </MenuFlyout>
+    </Page.Resources>
+
+    <Page.KeyboardAccelerators>
+        <KeyboardAccelerator Key="Up" Invoked="KeyboardAccelerator_Invoked"/>
+        <KeyboardAccelerator Key="Left" Invoked="KeyboardAccelerator_Invoked"/>
+        <KeyboardAccelerator Key="Down" Invoked="KeyboardAccelerator_Invoked"/>
+        <KeyboardAccelerator Key="Right" Invoked="KeyboardAccelerator_Invoked"/>
+        <KeyboardAccelerator Key="Add" Invoked="KeyboardAccelerator_Invoked"/>
+        <KeyboardAccelerator Key="Subtract" Invoked="KeyboardAccelerator_Invoked"/>
+        <KeyboardAccelerator Modifiers="Control" Key="Z" Invoked="KeyboardAccelerator_Invoked"/>
+        <KeyboardAccelerator Modifiers="Control" Key="U" Invoked="KeyboardAccelerator_Invoked"/>
+        <KeyboardAccelerator Modifiers="Control" Key="S" Invoked="KeyboardAccelerator_Invoked"/>
+        <KeyboardAccelerator Modifiers="Control" Key="O" Invoked="KeyboardAccelerator_Invoked"/>
+    </Page.KeyboardAccelerators>
+
+    <!--MAIN_LAYOUT-->
+    <Grid>
+        <Grid Name="WorkBox" ColumnDefinitions="*,250">
+
+            <Grid RowDefinitions="Auto,*" RowSpacing="10" Padding="10">
+                <Grid ColumnDefinitions="Auto,*,Auto">
+                    <StackPanel Orientation="Horizontal">
+                        <coreControls:ThemeIconButton x:Name="ShapeButton" Icon="&#xE70F;" Corner="Left" Flyout="{StaticResource ShapeMenuFlyout}"/>
+                        <coreControls:IconButton Icon="&#xE713;" IsSquare="True" Corner="Right" Flyout="{StaticResource SettingsFlyout}"/>
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="10">
+                        <StackPanel Orientation="Horizontal">
+                            <coreControls:IconButton Icon="&#xE7A7;" Tag="Undo" IsSquare="True" Corner="Left" ToolTipService.ToolTip="Undo Ctr+Z" Click="UndoButton_Click"/>
+                            <coreControls:IconButton Icon="&#xE7A6;" Tag="Redo" IsSquare="True" Corner="Right" ToolTipService.ToolTip="Redo Ctr+U" Click="UndoButton_Click"/>
+                        </StackPanel>
+                        <coreControls:ThemeIconButton Name="SaveButton" Icon="&#xE74E;" Click="ControlButton_Click"/>
+                    </StackPanel>
+                </Grid>
+
+                <Grid Grid.Row="1" Name="PreviewBox" SizeChanged="PreviewBox_SizeChanged">
+                    <Canvas Name="CanvasDrawing" PointerPressed="Canvas_PointerPressed" PointerMoved="Canvas_PointerMoved" PointerReleased="Canvas_PointerReleased" PointerExited="Canvas_PointerExited">
+                        <Image Name="PreviewImage"/>
+                    </Canvas>
+                    <ProgressRing Name="LoadingProgressRing" Width="40" Height="40" Visibility="Collapsed" IsActive="True" Foreground="{ThemeResource ProgressRingForeground}"/>
+                </Grid>
+            </Grid>
+
+            <Grid Grid.Column="1" RowDefinitions="*,Auto" RowSpacing="10">
+                <Grid RowDefinitions="Auto,*,Auto" RowSpacing="10" CornerRadius="0,0,0,5" Background="{ThemeResource DockBackground}">
+                    <Grid ColumnDefinitions="Auto,*,Auto"  Padding="10,10,10,0">
+                        <coreControls:IconTextButton Icon="&#xE710;" Text="Add images" Click="InputFilesButton_Click"
+                                                     IsEnabled="{Binding Status, ConverterParameter=Loading|Processing, Converter={StaticResource EnumComparisonToBoolInverseConverter}}"/>
+                        <coreControls:IconButton Grid.Column="2" Name="RemoveAllButton" Icon="&#xE74D;" IsSquare="True" Variant="Text" Click="ConfirmButton_Click"
+                                                 IsEnabled="{Binding Status, ConverterParameter=Loading|Processing, Converter={StaticResource EnumComparisonToBoolInverseConverter}}"/>
+                    </Grid>
+
+                    <ListView Grid.Row="1" Name="FileListView" ItemsSource="{Binding FileItems}" Padding="0"
+                              ContainerContentChanging="FileListView_ContainerContentChanging" SelectionChanged="FileListView_SelectionChanged"
+                              IsEnabled="{Binding Status, ConverterParameter=Loading|Processing, Converter={StaticResource EnumComparisonToBoolInverseConverter}}">
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10" Padding="0,5" ToolTipService.ToolTip="{Binding InputFilePath}">
+                                    <Border Width="48" Height="48" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                        <Image Source="{Binding Thumbnail}" UseLayoutRounding="False" Stretch="UniformToFill"/>
+                                    </Border>
+                                    <StackPanel Grid.Column="1">
+                                        <TextBlock FontSize="12" Text="{Binding InputFilePath, ConverterParameter=fileName, Converter={StaticResource FilePathConverter}}"/>
+                                    </StackPanel>
+                                    <coreControls:IconButton Grid.Row="1" Grid.Column="1" Icon="&#xE712;" Size="SM" IsSquare="True" Flyout="{StaticResource ItemMoreMenuFlyout}"
+                                                             VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0,0,0,5"
+                                                             IsEnabled="{Binding Status, ConverterParameter=Loading|Processing, Converter={StaticResource EnumComparisonToBoolInverseConverter}}"/>
+                                </Grid>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+
+                    <Grid Grid.Row="2" ColumnDefinitions="Auto,*,Auto"  Padding="10,0,10,10">
+                        <StackPanel Orientation="Horizontal">
+                            <coreControls:IconButton Name="PrevButton" Icon="&#xEDD5;" Size="SM" IsSquare="True" Corner="Left" Click="ControlButton_Click" ToolTipService.ToolTip="🠝/🠜"/>
+                            <coreControls:IconButton Name="NextButton" Icon="&#xEDD6;" Size="SM" IsSquare="True" Corner="Right" Click="ControlButton_Click" ToolTipService.ToolTip="🠟/🠞"/>
+                        </StackPanel>
+                        <TextBlock Grid.Column="2" Text="{Binding FileCountText}" Margin="10,0,0,0" TextAlignment="Center" VerticalAlignment="Center"/>
+                    </Grid>
+                </Grid>
+
+                <Grid Grid.Row="2" BorderBrush="{ThemeResource Border}" BorderThickness="1,1,0,0" CornerRadius="5,0,0,0">
+                    <StackPanel Padding="10">
+                        <TextBlock Text="{coreLibs:SRE K=Features_FileInfo}" FontSize="11" FontWeight="Bold"/>
+                        <StackPanel Margin="0,10,0,0" Spacing="5">
+                            <StackPanel>
+                                <TextBlock FontSize="11" Foreground="{ThemeResource Foreground2}" Text="{coreLibs:SRE K=Features_Name}"/>
+                                <TextBlock FontSize="12" Text="{Binding CurrentItem.InputFilePath, ConverterParameter=fileName, Converter={StaticResource FilePathConverter}}"/>
+                            </StackPanel>
+                            <StackPanel>
+                                <TextBlock FontSize="11" Foreground="{ThemeResource Foreground2}" Text="{coreLibs:SRE K=Features_MimeType}"/>
+                                <StackPanel Orientation="Horizontal" Spacing="5">
+                                    <TextBlock FontSize="12" Text="{Binding CurrentItem.InputMimeType}"/>
+                                    <TextBlock FontSize="12" Text="{Binding CurrentItem.InputFilePath, ConverterParameter=extension, Converter={StaticResource FilePathConverter}}"/>
+                                </StackPanel>
+                            </StackPanel>
+                            <StackPanel>
+                                <TextBlock FontSize="11" Foreground="{ThemeResource Foreground2}" Text="{coreLibs:SRE K=Features_FileSize}"/>
+                                <TextBlock FontSize="12" Text="{Binding CurrentItem.InputSize, Converter={StaticResource FileSizeToSizeStringConverter}}"/>
+                            </StackPanel>
+                            <StackPanel>
+                                <TextBlock FontSize="11" Foreground="{ThemeResource Foreground2}" Text="{coreLibs:SRE K=Features_Dimension}"/>
+                                <TextBlock FontSize="12" Text="{Binding CurrentItem.InputDimensionText}"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </StackPanel>
+
+                    <Grid Background="{ThemeResource PageBackground}" Visibility="{Binding CurrentItem, Converter={StaticResource IsNullConverter}}">
+                        <FontIcon Glyph="&#xE8C9;" FontSize="50"/>
+                    </Grid>
+                </Grid>
+            </Grid>
+        </Grid>
+
+        <Grid Name="WelcomeBox" ColumnDefinitions="*" Background="Transparent" AllowDrop="True"
+              DragEnter="Input_DragEnter" DragLeave="Input_DragLeave" DragOver="Input_DragOver" Drop="Input_Drop">
+            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="5">
+                <coreControls:IconButton Icon="&#xE7C5;" ConstantScale="4" IsSquare="True" Variant="Outline" HorizontalAlignment="Center" Click="InputFilesButton_Click"
+                                         IsEnabled="{Binding Status, ConverterParameter=Loading|Processing, Converter={StaticResource EnumComparisonToBoolInverseConverter}}"/>
+                <TextBlock FontSize="20" HorizontalTextAlignment="Center" Foreground="{ThemeResource Foreground}" Text="{coreLibs:SRE K=Features_AddImages}"/>
+                <TextBlock FontSize="14" HorizontalTextAlignment="Center" Foreground="{ThemeResource Foreground2}" Text="{coreLibs:SRE K=Features_OrDragAndDrop}"/>
+                <TextBlock FontSize="14" HorizontalTextAlignment="Center" Foreground="{ThemeResource Foreground2}" Text="{Binding InputTypes}"/>
+            </StackPanel>
+        </Grid>
+
+    </Grid>
+</Page>

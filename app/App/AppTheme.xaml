@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <SolidColorBrush x:Key="Theme" Color="#2255ff"/>
+    <SolidColorBrush x:Key="ThemeLighter" Color="#3366ff"/>
+    <SolidColorBrush x:Key="ThemeDarker" Color="#1144ee"/>
+    <SolidColorBrush x:Key="ThemeDarkest" Color="#001122"/>
+    <SolidColorBrush x:Key="ThemeOpacity" Color="#2255ff" Opacity="0.04"/>
+    <SolidColorBrush x:Key="ThemeForeground" Color="#ffffff"/>
+    <SolidColorBrush x:Key="ThemeForegroundDisabled" Color="#ffffff"/>
+</ResourceDictionary>
