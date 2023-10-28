@@ -8,14 +8,14 @@
   IgnorableNamespaces="uap rescap">
 
   <Identity
-    Name="IOStreamCo.Ltd.RemoveLogo"
+    Name="IOStreamCo.Ltd.EditProcessPhotos"
     Publisher="CN=671AC663-A793-4A03-B1E1-5D1E63B6097E"
-    Version="1.0.1.0" />
+    Version="1.0.0.0" />
 
   <mp:PhoneIdentity PhoneProductId="7e6bd226-7e49-49f6-8e22-c4a9d3f5e45b" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
   <Properties>
-    <DisplayName>Remove Logo</DisplayName>
+    <DisplayName>Edit Process Photos</DisplayName>
     <PublisherDisplayName>IO Stream Co., Ltd</PublisherDisplayName>
     <Logo>Images\StoreLogo.png</Logo>
   </Properties>
@@ -36,8 +36,8 @@
       Executable="$targetnametoken$.exe"
       EntryPoint="$targetentrypoint$">
       <uap:VisualElements
-        DisplayName="Universal Image Converter"
-        Description="UniversalImageConverter (Package)"
+        DisplayName="Edit Process Photos"
+        Description="EditProcessPhotos(Package)"
         BackgroundColor="transparent"
         Square150x150Logo="Images\Square150x150Logo.png"
         Square44x44Logo="Images\Square44x44Logo.png">
