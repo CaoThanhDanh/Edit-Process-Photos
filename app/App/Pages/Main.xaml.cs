@@ -24,6 +24,8 @@ using IOApp.Configs;
 using IOApp.Features;
 using System.Diagnostics;
 using System.IO;
+using static IOCore.Pages.About;
+using System.Net.Sockets;
 
 namespace IOApp.Pages
 {
@@ -195,6 +197,7 @@ namespace IOApp.Pages
 
         private string _currentInputFilePath = "";
         private string _tempOutputFilePath = "";
+        private ThumbnailItem _tempFilterItem;
 
         public Main()
         {
@@ -346,7 +349,9 @@ namespace IOApp.Pages
 
             _imageHistory.Add(bitmap);
             _maskHistory.Add(new Mat(_canvasImage.Size(), MatType.CV_8U, -1));
-            _currentRevision = 0;
+            // If select orther item => _tempFilterItem == null
+            if (_tempFilterItem == null)
+                _currentRevision = 0;
         }
 
         #region DRAWING_CANVAS
@@ -535,6 +540,9 @@ namespace IOApp.Pages
 
                         CurrentItem = item;
                         _sourceImage = new Mat(item.CacheImagePath);
+
+                        // If Select other Item in FileListView => _tempFilterItem = null
+                        _tempFilterItem = null;
 
                         RefreshPreviewBox();
 
@@ -1088,20 +1096,68 @@ namespace IOApp.Pages
         {
             if (sender is not Control control) return;
             if (Utils.Any(_status, StatusType.Loading, StatusType.Processing)) return;
-            if (FileListView.SelectedItem is not ThumbnailItem item) return;
 
             FilterButton.Tag = (control as RadioMenuFlyoutItem).Tag;
 
             string filterType = (control as RadioMenuFlyoutItem).Tag.ToString();
-            _currentInputFilePath = item.InputFilePath.ToString();
-            _tempOutputFilePath = "outputs\\output" + filterType+ ".png";
+            _currentInputFilePath = _currentItem.InputFilePath.ToString();
+
+            // TODO: Modify Output Path
+            _tempOutputFilePath = "D:\\Danh\\LVTN\\PythonCode\\Filters\\outputs\\output" + filterType+ ".png";
 
             RunCommandLine(_currentInputFilePath, _tempOutputFilePath, filterType.ToLower());
+
+            try
+            {
+                var isFilePath = Utils.IsFilePath(_tempOutputFilePath);
+                if (isFilePath.GetValueOrDefault(false))
+                {
+                    var imageMeta = ImageMagickUtils.GetMagickImageMeta(_tempOutputFilePath);
+
+                    if (Profile.IsAcceptedInputFormat(imageMeta?.Format))
+                    {
+                        _tempFilterItem = new() { InputInfo = new(_tempOutputFilePath) };
+                    }
+                    else throw new();
+                }
+            }
+            catch (Exception)
+            {
+            }
+
+            Status = StatusType.Loading;
+            _tempFilterItem.LoadImageCacheIfNotExist(true, new Progress<int>((int cacheImageLevel) =>
+            {
+                if (cacheImageLevel > 0)
+                {
+                    // TODO: Reload file after filtering
+                    _sourceImage = new Mat(_tempFilterItem.CacheImagePath);
+
+                    // TODO: Reload image to canvas, it is not working? Help me
+                    RefreshPreviewBox();
+
+                    EnableControlButton(PrevButton);
+                    EnableControlButton(NextButton);
+
+                    Status = StatusType.Loaded;
+
+                    GC.Collect();
+                    _ = AskForRate.Request(true, AskForRate.TimeTest, true, 10);
+                }
+                else
+                {
+                    PreviewImage.Source = _currentBitmapImage = null;
+                    CurrentItem = null;
+                    Status = StatusType.LoadFailed;
+                }
+            }));
         }
 
         private void RunCommandLine(string inputPath, string outputPath, string filterType)
         {
             Process process = new Process();
+
+            // TODO: Modify python.exe, workingDirectory, filters.py 
             process.StartInfo.FileName = @"C:\Users\dnath\AppData\Local\Programs\Python\Python311\python.exe";
             process.StartInfo.Arguments = @"filters.py " + filterType + " " + inputPath + " " + outputPath;
             process.StartInfo.WorkingDirectory = @"D:\Danh\LVTN\PythonCode\Filters";
