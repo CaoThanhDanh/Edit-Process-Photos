@@ -193,6 +193,9 @@ namespace IOApp.Pages
         private Mat _sourceImage;
         private Mat _canvasImage = new();
 
+        private string _currentInputFilePath = "";
+        private string _tempOutputFilePath = "";
+
         public Main()
         {
             InitializeComponent();
@@ -1084,14 +1087,19 @@ namespace IOApp.Pages
         private void FilterButton_Click(object sender, RoutedEventArgs e)
         {
             if (sender is not Control control) return;
+            if (Utils.Any(_status, StatusType.Loading, StatusType.Processing)) return;
+            if (FileListView.SelectedItem is not ThumbnailItem item) return;
 
             FilterButton.Tag = (control as RadioMenuFlyoutItem).Tag;
 
             string filterType = (control as RadioMenuFlyoutItem).Tag.ToString();
+            _currentInputFilePath = item.InputFilePath.ToString();
+            _tempOutputFilePath = "outputs\\output" + filterType+ ".png";
 
+            RunCommandLine(_currentInputFilePath, _tempOutputFilePath, filterType.ToLower());
         }
 
-        private void RunCommandLine(string inputPath = "assets\\mountain.jpg", string outputPath = "outputs\\mountain_Csharp.jpg", string filterType = "_1977")
+        private void RunCommandLine(string inputPath, string outputPath, string filterType)
         {
             Process process = new Process();
             process.StartInfo.FileName = @"C:\Users\dnath\AppData\Local\Programs\Python\Python311\python.exe";
