@@ -27,6 +27,35 @@
             <RadioMenuFlyoutItem Name="EllipseShapeMenuFlyoutItem" Click="ShapeButton_Click"/>
         </MenuFlyout>
 
+        <MenuFlyout x:Key="FilterMenuFlyout" Placement="Bottom">
+            <RadioMenuFlyoutItem Name="_1977FilterMenuFlyoutItem"       Click="FilterButton_Click"/>
+            <RadioMenuFlyoutItem Name="AdenFilterMenuFlyoutItem"        Click="FilterButton_Click"/>
+            <RadioMenuFlyoutItem Name="BrannanFilterMenuFlyoutItem"     Click="FilterButton_Click"/>
+            <RadioMenuFlyoutItem Name="BrooklynFilterMenuFlyoutItem"    Click="FilterButton_Click"/>
+            <RadioMenuFlyoutItem Name="ClarendonFilterMenuFlyoutItem"   Click="FilterButton_Click"/>
+            <RadioMenuFlyoutItem Name="EarlybirdFilterMenuFlyoutItem"   Click="FilterButton_Click"/>
+            <RadioMenuFlyoutItem Name="GinghamFilterMenuFlyoutItem"     Click="FilterButton_Click"/>
+            <RadioMenuFlyoutItem Name="HudsonFilterMenuFlyoutItem"      Click="FilterButton_Click"/>
+            <RadioMenuFlyoutItem Name="InkwellFilterMenuFlyoutItem"     Click="FilterButton_Click"/>
+            <RadioMenuFlyoutItem Name="KelvinFilterMenuFlyoutItem"      Click="FilterButton_Click"/>
+            <RadioMenuFlyoutItem Name="LarkFilterMenuFlyoutItem"        Click="FilterButton_Click"/>
+            <RadioMenuFlyoutItem Name="LofiFilterMenuFlyoutItem"        Click="FilterButton_Click"/>
+            <RadioMenuFlyoutItem Name="MavenFilterMenuFlyoutItem"       Click="FilterButton_Click"/>
+            <RadioMenuFlyoutItem Name="MayfairFilterMenuFlyoutItem"     Click="FilterButton_Click"/>
+            <RadioMenuFlyoutItem Name="MoonFilterMenuFlyoutItem"        Click="FilterButton_Click"/>
+            <RadioMenuFlyoutItem Name="NashvilleFilterMenuFlyoutItem"   Click="FilterButton_Click"/>
+            <RadioMenuFlyoutItem Name="PerpetuaFilterMenuFlyoutItem"    Click="FilterButton_Click"/>
+            <RadioMenuFlyoutItem Name="ReyesFilterMenuFlyoutItem"       Click="FilterButton_Click"/>
+            <!--<RadioMenuFlyoutItem Name="RiseFilterMenuFlyoutItem"        Click="FilterButton_Click"/>
+            <RadioMenuFlyoutItem Name="SlumberFilterMenuFlyoutItem"     Click="FilterButton_Click"/>
+            <RadioMenuFlyoutItem Name="StinsonFilterMenuFlyoutItem"     Click="FilterButton_Click"/>
+            <RadioMenuFlyoutItem Name="ToasterFilterMenuFlyoutItem"     Click="FilterButton_Click"/>
+            <RadioMenuFlyoutItem Name="ValenciaFilterMenuFlyoutItem"    Click="FilterButton_Click"/>
+            <RadioMenuFlyoutItem Name="WaldenFilterMenuFlyoutItem"      Click="FilterButton_Click"/>
+            <RadioMenuFlyoutItem Name="WillowFilterMenuFlyoutItem"      Click="FilterButton_Click"/>
+            <RadioMenuFlyoutItem Name="Xpro2FilterMenuFlyoutItem"       Click="FilterButton_Click"/>-->
+        </MenuFlyout>
+
         <Flyout x:Key="SettingsFlyout" Placement="Bottom">
             <StackPanel>
                 <StackPanel Name="Slider" Spacing="8" Orientation="Horizontal">
@@ -80,6 +109,9 @@
                     </StackPanel>
 
                     <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="10">
+                        <StackPanel>
+                            <coreControls:IconButton x:Name="FilterButton" Icon="&#xF4A5;" IsSquare="True" ToolTipService.ToolTip="Filter" Flyout="{StaticResource FilterMenuFlyout}"/>
+                        </StackPanel>
                         <StackPanel Orientation="Horizontal">
                             <coreControls:IconButton Icon="&#xE7A7;" Tag="Undo" IsSquare="True" Corner="Left" ToolTipService.ToolTip="Undo Ctr+Z" Click="UndoButton_Click"/>
                             <coreControls:IconButton Icon="&#xE7A6;" Tag="Redo" IsSquare="True" Corner="Right" ToolTipService.ToolTip="Redo Ctr+U" Click="UndoButton_Click"/>

@@ -22,6 +22,8 @@ using Windows.Win32;
 using IOCore.Libs;
 using IOApp.Configs;
 using IOApp.Features;
+using System.Diagnostics;
+using System.IO;
 
 namespace IOApp.Pages
 {
@@ -40,6 +42,38 @@ namespace IOApp.Pages
         }
 
         public Dictionary<ShapeType, Control> SHAPES;
+
+        public enum FilterType
+        {
+            _1977,
+            Aden,
+            Brannan,
+            Brooklyn,
+            Clarendon,
+            Earlybird,
+            Gingham,
+            Hudson,
+            Inkwell,
+            Kelvin,
+            Lark,
+            Lofi,
+            Maven,
+            Mayfair,
+            Moon,
+            Nashville,
+            Perpetua,
+            Reyes,
+            Rise,
+            Slumber,
+            Stinson,
+            Toaster,
+            Valencia,
+            Walden,
+            Willow,
+            Xpro2,
+        }
+
+        public Dictionary<FilterType, RadioMenuFlyoutItem> FILTERS;
 
         public enum StatusType
         {
@@ -938,6 +972,36 @@ namespace IOApp.Pages
                 { ShapeType.Ellipse,   EllipseShapeMenuFlyoutItem }
             };
 
+            FILTERS = new()
+            {
+                { FilterType._1977,    _1977FilterMenuFlyoutItem },
+                { FilterType.Aden, AdenFilterMenuFlyoutItem },
+                { FilterType.Brannan, BrannanFilterMenuFlyoutItem },
+                { FilterType.Brooklyn, BrooklynFilterMenuFlyoutItem },
+                { FilterType.Clarendon, ClarendonFilterMenuFlyoutItem },
+                { FilterType.Earlybird, EarlybirdFilterMenuFlyoutItem },
+                { FilterType.Gingham, GinghamFilterMenuFlyoutItem },
+                { FilterType.Hudson, HudsonFilterMenuFlyoutItem },
+                { FilterType.Inkwell, InkwellFilterMenuFlyoutItem },
+                { FilterType.Kelvin, KelvinFilterMenuFlyoutItem },
+                { FilterType.Lark, LarkFilterMenuFlyoutItem },
+                { FilterType.Lofi, LofiFilterMenuFlyoutItem },
+                { FilterType.Maven, MavenFilterMenuFlyoutItem },
+                { FilterType.Mayfair, MayfairFilterMenuFlyoutItem },
+                { FilterType.Moon, MoonFilterMenuFlyoutItem },
+                { FilterType.Nashville, NashvilleFilterMenuFlyoutItem },
+                { FilterType.Perpetua, PerpetuaFilterMenuFlyoutItem },
+                { FilterType.Reyes, ReyesFilterMenuFlyoutItem },
+                //{ FilterType.Rise, RiseFilterMenuFlyoutItem },
+                //{ FilterType.Slumber, SlumberFilterMenuFlyoutItem },
+                //{ FilterType.Stinson, StinsonFilterMenuFlyoutItem },
+                //{ FilterType.Toaster, ToasterFilterMenuFlyoutItem },
+                //{ FilterType.Valencia, ValenciaFilterMenuFlyoutItem },
+                //{ FilterType.Walden, WaldenFilterMenuFlyoutItem },
+                //{ FilterType.Willow, WillowFilterMenuFlyoutItem },
+                //{ FilterType.Xpro2 , Xpro2FilterMenuFlyoutItem }, 
+            };
+
             LineShapeMenuFlyoutItem.Text = "Pen";
             LineShapeMenuFlyoutItem.Icon = new FontIcon() { Glyph = "\uED63" };
             LineShapeMenuFlyoutItem.Tag = ShapeType.Line;
@@ -949,6 +1013,12 @@ namespace IOApp.Pages
             EllipseShapeMenuFlyoutItem.Text = "Ellipse";
             EllipseShapeMenuFlyoutItem.Icon = new FontIcon() { Glyph = "\uEA3A" };
             EllipseShapeMenuFlyoutItem.Tag = ShapeType.Ellipse;
+
+            foreach (KeyValuePair<FilterType, RadioMenuFlyoutItem> filterItem in FILTERS)
+            {
+                filterItem.Value.Tag = filterItem.Key;
+                filterItem.Value.Text = filterItem.Key.ToString();
+            }
 
             LineShapeMenuFlyoutItem.IsChecked = true;
 
@@ -1009,6 +1079,31 @@ namespace IOApp.Pages
                 Slider.Visibility = Visibility.Visible;
             else
                 Slider.Visibility = Visibility.Collapsed;
+        }
+
+        private void FilterButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is not Control control) return;
+
+            FilterButton.Tag = (control as RadioMenuFlyoutItem).Tag;
+
+            string filterType = (control as RadioMenuFlyoutItem).Tag.ToString();
+
+        }
+
+        private void RunCommandLine(string inputPath = "assets\\mountain.jpg", string outputPath = "outputs\\mountain_Csharp.jpg", string filterType = "_1977")
+        {
+            Process process = new Process();
+            process.StartInfo.FileName = @"C:\Users\dnath\AppData\Local\Programs\Python\Python311\python.exe";
+            process.StartInfo.Arguments = @"filters.py " + filterType + " " + inputPath + " " + outputPath;
+            process.StartInfo.WorkingDirectory = @"D:\Danh\LVTN\PythonCode\Filters";
+            process.StartInfo.CreateNoWindow = true;
+            process.StartInfo.UseShellExecute = false;
+
+            process.Start();
+            process.WaitForExit();
+            process.Close();
+            process.Dispose();
         }
     }
 }
