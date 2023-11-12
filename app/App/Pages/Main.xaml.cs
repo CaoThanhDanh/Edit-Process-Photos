@@ -27,6 +27,7 @@ using System.IO;
 using static IOCore.Pages.About;
 using System.Net.Sockets;
 using IronOcr;
+using System.Text.RegularExpressions;
 
 namespace IOApp.Pages
 {
@@ -1173,9 +1174,19 @@ namespace IOApp.Pages
         private void OCRButton_Click(object sender, RoutedEventArgs e)
         {
             IronTesseract IronOcr = new IronTesseract();
+            IronOcr.Language = OcrLanguage.Vietnamese;
             var inputFilePath = "D:\\Danh\\images\\ocr_receipt.png";
             var Result = IronOcr.Read(inputFilePath);
             var ouputString = Result.Text;
+
+            // Pattern
+            string patternInput = @"\d{3}";
+            Regex regex = new Regex(patternInput);
+            Match match = regex.Match(ouputString);
+            if (match.Success)
+            {
+                var desiredValueString = match.Value;
+            }
 
             var stop = "Stop";
         }
