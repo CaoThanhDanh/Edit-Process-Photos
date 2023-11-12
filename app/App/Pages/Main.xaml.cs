@@ -26,6 +26,7 @@ using System.Diagnostics;
 using System.IO;
 using static IOCore.Pages.About;
 using System.Net.Sockets;
+using IronOcr;
 
 namespace IOApp.Pages
 {
@@ -1168,6 +1169,15 @@ namespace IOApp.Pages
             process.WaitForExit();
             process.Close();
             process.Dispose();
+        }
+        private void OCRButton_Click(object sender, RoutedEventArgs e)
+        {
+            IronTesseract IronOcr = new IronTesseract();
+            var inputFilePath = "D:\\Danh\\images\\ocr_receipt.png";
+            var Result = IronOcr.Read(inputFilePath);
+            var ouputString = Result.Text;
+
+            var stop = "Stop";
         }
     }
 }
