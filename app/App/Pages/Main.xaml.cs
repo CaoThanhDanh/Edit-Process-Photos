@@ -1133,7 +1133,7 @@ namespace IOApp.Pages
                     // TODO: Reload file after filtering
                     _sourceImage = new Mat(_tempFilterItem.CacheImagePath);
 
-                    // TODO: Reload image to canvas, it is not working? Help me
+                    // TODO: Reload image to canvas, it is not working
                     RefreshPreviewBox();
 
                     EnableControlButton(PrevButton);
