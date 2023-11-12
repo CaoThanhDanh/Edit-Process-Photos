@@ -1175,7 +1175,7 @@ namespace IOApp.Pages
         {
             IronTesseract IronOcr = new IronTesseract();
             IronOcr.Language = OcrLanguage.Vietnamese;
-            var inputFilePath = "D:\\Danh\\images\\ocr_receipt.png";
+            var inputFilePath = "D:\\Danh\\images\\ocr_bill.jpg";
             var Result = IronOcr.Read(inputFilePath);
             var ouputString = Result.Text;
 
