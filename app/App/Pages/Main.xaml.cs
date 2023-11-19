@@ -46,6 +46,14 @@ namespace IOApp.Pages
         }
 
         public Dictionary<ShapeType, Control> SHAPES;
+        public enum LangType
+        {
+            English,
+            Vietnamese,
+            Chinese
+        }
+
+        public Dictionary<LangType, Control> LANGUAGES;
 
         public enum FilterType
         {
@@ -985,6 +993,50 @@ namespace IOApp.Pages
                 { ShapeType.Ellipse,   EllipseShapeMenuFlyoutItem }
             };
 
+            LineShapeMenuFlyoutItem.Text = "Pen";
+            LineShapeMenuFlyoutItem.Icon = new FontIcon() { Glyph = "\uED63" };
+            LineShapeMenuFlyoutItem.Tag = ShapeType.Line;
+
+            RectangleShapeMenuFlyoutItem.Text = "Rectangle";
+            RectangleShapeMenuFlyoutItem.Icon = new FontIcon() { Glyph = "\uE7FB" };
+            RectangleShapeMenuFlyoutItem.Tag = ShapeType.Rectangle;
+
+            EllipseShapeMenuFlyoutItem.Text = "Ellipse";
+            EllipseShapeMenuFlyoutItem.Icon = new FontIcon() { Glyph = "\uEA3A" };
+            EllipseShapeMenuFlyoutItem.Tag = ShapeType.Ellipse;
+
+            LineShapeMenuFlyoutItem.IsChecked = true;
+
+            ShapeButton.Icon = ((SHAPES[ShapeType.Line] as RadioMenuFlyoutItem).Icon as FontIcon).Glyph;
+            ShapeButton.Tag = ShapeType.Line;
+
+            //
+
+            LANGUAGES = new()
+            {
+                { LangType.English,    EnglishFlyoutItem },
+                { LangType.Vietnamese, VietnameseFlyoutItem},
+                { LangType.Chinese,    ChineseFlyoutItem }
+            };
+
+            EnglishFlyoutItem.Text = "English";
+            EnglishFlyoutItem.Icon = new FontIcon() { Glyph = "\uE775" };
+            EnglishFlyoutItem.Tag = LangType.English;
+
+            VietnameseFlyoutItem.Text = "Vietnamese";
+            VietnameseFlyoutItem.Icon = new FontIcon() { Glyph = "\uE70C" };
+            VietnameseFlyoutItem.Tag = LangType.Vietnamese;
+
+            ChineseFlyoutItem.Text = "Chinese";
+            ChineseFlyoutItem.Icon = new FontIcon() { Glyph = "\uE88D" };
+            ChineseFlyoutItem.Tag = LangType.Chinese;
+
+            EnglishFlyoutItem.IsChecked = true;
+
+            LanguageButton.Icon = ((LANGUAGES[LangType.English] as RadioMenuFlyoutItem).Icon as FontIcon).Glyph;
+            LanguageButton.Tag = LangType.English;
+
+            //
             FILTERS = new()
             {
                 { FilterType._1977,    _1977FilterMenuFlyoutItem },
@@ -1015,28 +1067,13 @@ namespace IOApp.Pages
                 //{ FilterType.Xpro2 , Xpro2FilterMenuFlyoutItem }, 
             };
 
-            LineShapeMenuFlyoutItem.Text = "Pen";
-            LineShapeMenuFlyoutItem.Icon = new FontIcon() { Glyph = "\uED63" };
-            LineShapeMenuFlyoutItem.Tag = ShapeType.Line;
-
-            RectangleShapeMenuFlyoutItem.Text = "Rectangle";
-            RectangleShapeMenuFlyoutItem.Icon = new FontIcon() { Glyph = "\uE7FB" };
-            RectangleShapeMenuFlyoutItem.Tag = ShapeType.Rectangle;
-
-            EllipseShapeMenuFlyoutItem.Text = "Ellipse";
-            EllipseShapeMenuFlyoutItem.Icon = new FontIcon() { Glyph = "\uEA3A" };
-            EllipseShapeMenuFlyoutItem.Tag = ShapeType.Ellipse;
-
             foreach (KeyValuePair<FilterType, RadioMenuFlyoutItem> filterItem in FILTERS)
             {
                 filterItem.Value.Tag = filterItem.Key;
                 filterItem.Value.Text = filterItem.Key.ToString();
             }
 
-            LineShapeMenuFlyoutItem.IsChecked = true;
-
-            ShapeButton.Icon = ((SHAPES[ShapeType.Line] as RadioMenuFlyoutItem).Icon as FontIcon).Glyph;
-            ShapeButton.Tag = ShapeType.Line;
+            
         }
 
         #endregion
@@ -1092,6 +1129,14 @@ namespace IOApp.Pages
                 Slider.Visibility = Visibility.Visible;
             else
                 Slider.Visibility = Visibility.Collapsed;
+        }
+
+        private void LanguageButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is not Control control) return;
+
+            LanguageButton.Icon = ((control as RadioMenuFlyoutItem).Icon as FontIcon).Glyph;
+            LanguageButton.Tag = (control as RadioMenuFlyoutItem).Tag;
         }
 
         private void FilterButton_Click(object sender, RoutedEventArgs e)
@@ -1173,6 +1218,9 @@ namespace IOApp.Pages
         }
         private void OCRButton_Click(object sender, RoutedEventArgs e)
         {
+            if (InputPath.Text == "") return;
+            string pattern = InputPattern.Text;
+
             IronTesseract IronOcr = new IronTesseract();
 
             // Choose Languge
@@ -1195,6 +1243,16 @@ namespace IOApp.Pages
             }
 
             var stop = "Stop";
+        }
+
+        private void CopyButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void PasteButton_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }
