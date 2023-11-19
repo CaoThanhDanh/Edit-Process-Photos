@@ -1218,31 +1218,30 @@ namespace IOApp.Pages
         }
         private void OCRButton_Click(object sender, RoutedEventArgs e)
         {
+            if (sender is not Control control) return;
             if (InputPath.Text == "") return;
+
             string pattern = InputPattern.Text;
+            string inputPath = InputPath.Text;
 
-            IronTesseract IronOcr = new IronTesseract();
-
-            // Choose Languge
-            IronOcr.Language = OcrLanguage.Vietnamese;
-            
-            // Input
-            var inputFilePath = "D:\\Danh\\images\\6-info.png";
-            // Pattern
-            string patternInput = @"\d{3}";
-
-            // OUTPUT
-            var Result = IronOcr.Read(inputFilePath);
-            var ouputString = Result.Text;
-
-            Regex regex = new Regex(patternInput);  
-            Match match = regex.Match(ouputString);
-            if (match.Success)
+            IronTesseract IronOcr = new();
+            IronOcr.Language = (LangType)LanguageButton.Tag switch
             {
-                var desiredValueString = match.Value;
-            }
+                LangType.English    => OcrLanguage.English,
+                LangType.Vietnamese => OcrLanguage.Vietnamese,
+                LangType.Chinese    => OcrLanguage.ChineseSimplifiedFast,
+                _ => OcrLanguage.English,
+            } ;
 
-            var stop = "Stop";
+            OCROutput.Text = IronOcr.Read(inputPath).Text;
+
+            if (OCROutput.Text != "" && pattern != "")
+            {
+                Regex regex = new Regex(pattern);
+                Match match = regex.Match(OCROutput.Text);
+                if (match.Success)
+                    OCRSpecificOutput.Text = match.Value;
+            }
         }
 
         private void CopyButton_Click(object sender, RoutedEventArgs e)

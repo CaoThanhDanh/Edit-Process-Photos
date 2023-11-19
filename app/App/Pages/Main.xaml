@@ -149,19 +149,21 @@
                         </Grid>
                         
                         <Grid ColumnDefinitions="*,Auto" ColumnSpacing="5">
-                            <TextBox Name="OCROutput" Header="All" MaxHeight="245"
-                                     IsEnabled="True" AcceptsReturn="True" TextWrapping="Wrap" 
+                            <TextBox Name="OCROutput" Header="All" IsEnabled="True" 
+                                     MaxHeight="245" AcceptsReturn="True" TextWrapping="Wrap" 
                                      ScrollViewer.VerticalScrollBarVisibility="Auto"/>
                             <coreControls:IconButton Grid.Column="1" x:Name="CopyAllButton" Tag ="CopyAll" Icon="&#xE8C8;" IsSquare="True" ToolTipService.ToolTip="Copy all extracted info" Click="CopyButton_Click" VerticalAlignment="Bottom"/>
                         </Grid>
                         
                         <Grid ColumnDefinitions="*,Auto" ColumnSpacing="5">
-                            <TextBox Name="OCRSpecificOutput" Header="Specific" IsEnabled="True"/>
+                            <TextBox Name="OCRSpecificOutput" Header="Specific" IsEnabled="True"
+                                     MaxHeight="245" AcceptsReturn="True" TextWrapping="Wrap" 
+                                     ScrollViewer.VerticalScrollBarVisibility="Auto"/>
                             <coreControls:IconButton Grid.Column="1" x:Name="CopySpecificButton" Tag ="CopySpecific" Icon="&#xE8C8;" IsSquare="True" ToolTipService.ToolTip="Copy all specific info" Click="CopyButton_Click" VerticalAlignment="Bottom"/>
                         </Grid>
 
                         <Grid HorizontalAlignment="Center">
-                            <coreControls:IconTextButton Icon="&#xEE6F;" Text="Extract" Click="InputFilesButton_Click"/>
+                            <coreControls:IconTextButton Icon="&#xEE6F;" Text="Extract" Click="OCRButton_Click"/>
                         </Grid>
                     </StackPanel>
                 </Grid>
