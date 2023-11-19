@@ -1174,14 +1174,20 @@ namespace IOApp.Pages
         private void OCRButton_Click(object sender, RoutedEventArgs e)
         {
             IronTesseract IronOcr = new IronTesseract();
+
+            // Choose Languge
             IronOcr.Language = OcrLanguage.Vietnamese;
-            var inputFilePath = "D:\\Danh\\images\\ocr_bill.jpg";
+            
+            // Input
+            var inputFilePath = "D:\\Danh\\images\\6-info.png";
+            // Pattern
+            string patternInput = @"\d{3}";
+
+            // OUTPUT
             var Result = IronOcr.Read(inputFilePath);
             var ouputString = Result.Text;
 
-            // Pattern
-            string patternInput = @"\d{3}";
-            Regex regex = new Regex(patternInput);
+            Regex regex = new Regex(patternInput);  
             Match match = regex.Match(ouputString);
             if (match.Success)
             {

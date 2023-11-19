@@ -123,11 +123,22 @@
                     </StackPanel>
                 </Grid>
 
-                <Grid Grid.Row="1" Name="PreviewBox" SizeChanged="PreviewBox_SizeChanged">
-                    <Canvas Name="CanvasDrawing" PointerPressed="Canvas_PointerPressed" PointerMoved="Canvas_PointerMoved" PointerReleased="Canvas_PointerReleased" PointerExited="Canvas_PointerExited">
-                        <Image Name="PreviewImage"/>
-                    </Canvas>
-                    <ProgressRing Name="LoadingProgressRing" Width="40" Height="40" Visibility="Collapsed" IsActive="True" Foreground="{ThemeResource ProgressRingForeground}"/>
+                <Grid Grid.Row="1" ColumnDefinitions="*,300">
+                    <Grid Name="PreviewBox" SizeChanged="PreviewBox_SizeChanged">
+                        <Canvas Name="CanvasDrawing" PointerPressed="Canvas_PointerPressed" PointerMoved="Canvas_PointerMoved" PointerReleased="Canvas_PointerReleased" PointerExited="Canvas_PointerExited">
+                            <Image Name="PreviewImage"/>
+                        </Canvas>
+                        <ProgressRing Name="LoadingProgressRing" Width="40" Height="40" Visibility="Collapsed" IsActive="True" Foreground="{ThemeResource ProgressRingForeground}"/>
+                    </Grid>
+                    <StackPanel Grid.Column="1" Orientation="Vertical" Name="ExtractInfomationArea" Spacing="10">
+                        <TextBox Name="InputPath" Width="250" Header="Import" PlaceholderText="Type your path here"/>
+                        <TextBox Name="InputPattern" Width="250" Header="Pattern" PlaceholderText="Type your pattern here"/>
+                        <TextBox Name="OCROutput" Width="250" Header="All" IsEnabled="True"/>
+                        <TextBox Name="OCRSpecificOutput" Width="250" Header="Specific" IsEnabled="True"/>
+                        <Grid HorizontalAlignment="Center">
+                            <coreControls:IconTextButton Icon="&#xEE6F;" Text="Extract" Click="InputFilesButton_Click"/>
+                        </Grid>
+                    </StackPanel>
                 </Grid>
             </Grid>
 
