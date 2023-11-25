@@ -1231,7 +1231,7 @@ namespace IOApp.Pages
                 LangType.Vietnamese => OcrLanguage.Vietnamese,
                 LangType.Chinese    => OcrLanguage.ChineseSimplifiedFast,
                 _ => OcrLanguage.English,
-            } ;
+            };
 
             OCROutput.Text = IronOcr.Read(inputPath).Text;
 
