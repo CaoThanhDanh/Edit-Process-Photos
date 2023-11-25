@@ -549,6 +549,7 @@ namespace IOApp.Pages
                         _currentRevision = 0;
 
                         CurrentItem = item;
+                        InputPath.Text = _currentItem.InputFilePath;
                         _sourceImage = new Mat(item.CacheImagePath);
 
                         // If Select other Item in FileListView => _tempFilterItem = null
