@@ -28,6 +28,9 @@ using static IOCore.Pages.About;
 using System.Net.Sockets;
 using IronOcr;
 using System.Text.RegularExpressions;
+using IronPython.Hosting;
+using Microsoft.Scripting.Hosting;
+using BitMiracle.LibTiff.Classic;
 
 namespace IOApp.Pages
 {
@@ -1145,13 +1148,15 @@ namespace IOApp.Pages
             if (sender is not Control control) return;
             if (Utils.Any(_status, StatusType.Loading, StatusType.Processing)) return;
 
+            Status = StatusType.Loading;
+
             FilterButton.Tag = (control as RadioMenuFlyoutItem).Tag;
 
             string filterType = (control as RadioMenuFlyoutItem).Tag.ToString();
             _currentInputFilePath = _currentItem.InputFilePath.ToString();
 
             // TODO: Modify Output Path
-            _tempOutputFilePath = "D:\\Danh\\LVTN\\PythonCode\\Filters\\outputs\\output" + filterType+ ".png";
+            _tempOutputFilePath = "D:\\Workspace\\University\\LVTN\\PythonCode\\Filters\\outputs\\danh" + filterType+ ".png";
 
             RunCommandLine(_currentInputFilePath, _tempOutputFilePath, filterType.ToLower());
 
@@ -1173,32 +1178,33 @@ namespace IOApp.Pages
             {
             }
 
-            Status = StatusType.Loading;
-            _tempFilterItem.LoadImageCacheIfNotExist(true, new Progress<int>((int cacheImageLevel) =>
-            {
-                if (cacheImageLevel > 0)
-                {
-                    // TODO: Reload file after filtering
-                    _sourceImage = new Mat(_tempFilterItem.CacheImagePath);
+            Status = StatusType.Loaded;
+            //_tempFilterItem.LoadImageCacheIfNotExist(true, new Progress<int>((int cacheImageLevel) =>
+            //{
+            //    if (cacheImageLevel > 0)
+            //    {
+            //        // TODO: Reload file after filtering
+            //        _sourceImage = new Mat(_tempFilterItem.CacheImagePath);
 
-                    // TODO: Reload image to canvas, it is not working
-                    RefreshPreviewBox();
+            //        // TODO: Reload image to canvas, it is not working
+            //        RefreshPreviewBox();
 
-                    EnableControlButton(PrevButton);
-                    EnableControlButton(NextButton);
+            //        EnableControlButton(PrevButton);
+            //        EnableControlButton(NextButton);
 
-                    Status = StatusType.Loaded;
+            //        Status = StatusType.Loaded;
 
-                    GC.Collect();
-                    _ = AskForRate.Request(true, AskForRate.TimeTest, true, 10);
-                }
-                else
-                {
-                    PreviewImage.Source = _currentBitmapImage = null;
-                    CurrentItem = null;
-                    Status = StatusType.LoadFailed;
-                }
-            }));
+            //        GC.Collect();
+            //        _ = AskForRate.Request(true, AskForRate.TimeTest, true, 10);
+            //    }
+            //    else
+            //    {
+            //        PreviewImage.Source = _currentBitmapImage = null;
+            //        CurrentItem = null;
+            //        Status = StatusType.LoadFailed;
+            //    }
+            //}));
+
         }
 
         private void RunCommandLine(string inputPath, string outputPath, string filterType)
@@ -1206,17 +1212,36 @@ namespace IOApp.Pages
             Process process = new Process();
 
             // TODO: Modify python.exe, workingDirectory, filters.py 
-            process.StartInfo.FileName = @"C:\Users\dnath\AppData\Local\Programs\Python\Python311\python.exe";
+            process.StartInfo.FileName = @"C:\Users\Admin\miniconda3\python.exe";
             process.StartInfo.Arguments = @"filters.py " + filterType + " " + inputPath + " " + outputPath;
-            process.StartInfo.WorkingDirectory = @"D:\Danh\LVTN\PythonCode\Filters";
+            process.StartInfo.WorkingDirectory = @"D:\Workspace\University\LVTN\PythonCode\Filters";
             process.StartInfo.CreateNoWindow = true;
-            process.StartInfo.UseShellExecute = false;
+            process.StartInfo.UseShellExecute = true;
 
             process.Start();
             process.WaitForExit();
             process.Close();
             process.Dispose();
         }
+        
+        //private void PythonButton_Click(object sender, RoutedEventArgs e)
+        //{
+        //    string inputPath = @"D:\Workspace\University\LVTN\PythonCode\Filters\test.py";
+        //    var engine = Python.CreateEngine();
+        //    var scope = engine.CreateScope();
+
+        //    var script = engine.CreateScriptSourceFromFile(inputPath);
+
+        //    scope.SetVariable("input_path", "danh.png");
+        //    scope.SetVariable("output_dir", "text.txt");
+        //    script.Execute(scope);
+
+        //    //Đã lấy được result
+        //    dynamic result = scope.GetVariable("result");
+        //    Console.WriteLine("This Result: " + result);
+        //}
+
+
         private void OCRButton_Click(object sender, RoutedEventArgs e)
         {
             if (sender is not Control control) return;
