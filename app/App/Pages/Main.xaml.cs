@@ -43,7 +43,7 @@ namespace IOApp.Pages
 
         public enum ShapeType
         {
-            Line,
+            Polyline,
             Rectangle,
             Ellipse
         }
@@ -371,7 +371,7 @@ namespace IOApp.Pages
 
         private void Draw(ShapeType shape, Windows.Foundation.Point point)
         {
-            if (shape == ShapeType.Line)
+            if (shape == ShapeType.Polyline)
             {
                 if (point == _startPoint)
                 {
@@ -466,7 +466,7 @@ namespace IOApp.Pages
         {
             var point = e.GetCurrentPoint(CanvasDrawing).Position;
 
-            if ((ShapeType)ShapeButton.Tag == ShapeType.Line)
+            if ((ShapeType)ShapeButton.Tag == ShapeType.Polyline)
             {
                 if (_cursorShape == null)
                 { 
@@ -527,7 +527,7 @@ namespace IOApp.Pages
         public void SelectIndex(int index)
         {
             FileListView.SelectedIndex = index;
-        }    
+        }
 
         public void SelectItem(ThumbnailItem item)
         {
@@ -770,10 +770,10 @@ namespace IOApp.Pages
                 switch (e.Key)
                 {
                     case VirtualKey.Z:
-                        Undo("Undo");
+                        HistoryManageInpaint("Undo");
                         break;
                     case VirtualKey.U:
-                        Undo("Redo");
+                        HistoryManageInpaint("Redo");
                         break;
                     case VirtualKey.S:
                         if (FileListView.SelectedItem is not ThumbnailItem item) return;
@@ -825,7 +825,7 @@ namespace IOApp.Pages
 
             var shape = (ShapeType)ShapeButton.Tag;
 
-            if (shape == ShapeType.Line)
+            if (shape == ShapeType.Polyline)
             {
                 List<IEnumerable<Point>> polylines = new() { _polylinePoints.Select(i => new Point(i.X, i.Y)) };
                 Cv2.Polylines(_mask, polylines, false, Scalar.White, (int)SliderThickness.Value);
@@ -883,13 +883,13 @@ namespace IOApp.Pages
 
             _ = Task.Run(() =>
             {
-                Cv2.Inpaint(_canvasImage, _mask, _inpaintedImage, 30, InpaintMethod.NS);
+                Cv2.Inpaint(_canvasImage, _mask, _inpaintedImage, 10, InpaintMethod.Telea);
 
                 progress.Report(true);
             });
         }
 
-        private void Undo(string tag)
+        private void HistoryManageInpaint(string tag)
         {
             if (Utils.Any(_status, StatusType.Loading, StatusType.Processing)) return;
 
@@ -909,10 +909,10 @@ namespace IOApp.Pages
             _canvasImage = BitmapToMat(_imageHistory[_currentRevision]);
         }    
 
-        private void UndoButton_Click(object sender, RoutedEventArgs e)
+        private void UndoOrRedoButton_Click(object sender, RoutedEventArgs e)
         {
             if ((sender as FrameworkElement)?.Tag is not string tag) return;
-            Undo(tag);
+            HistoryManageInpaint(tag);
         }
 
         public static System.Drawing.Bitmap MatToBitmap(Mat image) => OpenCvSharp.Extensions.BitmapConverter.ToBitmap(image);
@@ -992,14 +992,14 @@ namespace IOApp.Pages
 
             SHAPES = new()
             {
-                { ShapeType.Line,      LineShapeMenuFlyoutItem },
+                { ShapeType.Polyline,      LineShapeMenuFlyoutItem },
                 { ShapeType.Rectangle, RectangleShapeMenuFlyoutItem },
                 { ShapeType.Ellipse,   EllipseShapeMenuFlyoutItem }
             };
 
             LineShapeMenuFlyoutItem.Text = "Pen";
             LineShapeMenuFlyoutItem.Icon = new FontIcon() { Glyph = "\uED63" };
-            LineShapeMenuFlyoutItem.Tag = ShapeType.Line;
+            LineShapeMenuFlyoutItem.Tag = ShapeType.Polyline;
 
             RectangleShapeMenuFlyoutItem.Text = "Rectangle";
             RectangleShapeMenuFlyoutItem.Icon = new FontIcon() { Glyph = "\uE7FB" };
@@ -1011,8 +1011,8 @@ namespace IOApp.Pages
 
             LineShapeMenuFlyoutItem.IsChecked = true;
 
-            ShapeButton.Icon = ((SHAPES[ShapeType.Line] as RadioMenuFlyoutItem).Icon as FontIcon).Glyph;
-            ShapeButton.Tag = ShapeType.Line;
+            ShapeButton.Icon = ((SHAPES[ShapeType.Polyline] as RadioMenuFlyoutItem).Icon as FontIcon).Glyph;
+            ShapeButton.Tag = ShapeType.Polyline;
 
             //
 
@@ -1076,8 +1076,6 @@ namespace IOApp.Pages
                 filterItem.Value.Tag = filterItem.Key;
                 filterItem.Value.Text = filterItem.Key.ToString();
             }
-
-            
         }
 
         #endregion
@@ -1129,7 +1127,7 @@ namespace IOApp.Pages
             ShapeButton.Icon = ((control as RadioMenuFlyoutItem).Icon as FontIcon).Glyph;
             ShapeButton.Tag = (control as RadioMenuFlyoutItem).Tag;
 
-            if ((ShapeType)ShapeButton.Tag == ShapeType.Line)
+            if ((ShapeType)ShapeButton.Tag == ShapeType.Polyline)
                 Slider.Visibility = Visibility.Visible;
             else
                 Slider.Visibility = Visibility.Collapsed;
@@ -1215,8 +1213,8 @@ namespace IOApp.Pages
             process.StartInfo.FileName = @"C:\Users\Admin\miniconda3\python.exe";
             process.StartInfo.Arguments = @"filters.py " + filterType + " " + inputPath + " " + outputPath;
             process.StartInfo.WorkingDirectory = @"D:\Workspace\University\LVTN\PythonCode\Filters";
-            process.StartInfo.CreateNoWindow = true;
-            process.StartInfo.UseShellExecute = true;
+            process.StartInfo.CreateNoWindow = false;
+            process.StartInfo.UseShellExecute = false;
 
             process.Start();
             process.WaitForExit();
@@ -1272,12 +1270,28 @@ namespace IOApp.Pages
 
         private void CopyButton_Click(object sender, RoutedEventArgs e)
         {
+            if ((sender as FrameworkElement).Tag is not string tag) return;
+            var package = new DataPackage();
 
+            if (tag == "CopyAll")
+                package.SetText(OCROutput.Text);
+            else if (tag == "CopySpecific")
+                package.SetText(OCRSpecificOutput.Text);
+            Clipboard.SetContent(package);
         }
 
-        private void PasteButton_Click(object sender, RoutedEventArgs e)
+        private async void PasteButton_Click(object sender, RoutedEventArgs e)
         {
+            if ((sender as FrameworkElement).Tag is not string tag) return;
+            var package = Clipboard.GetContent();
 
+            if (package.Contains(StandardDataFormats.Text))
+            {
+                if (tag == "PastePath")
+                    InputPath.Text = await package.GetTextAsync();
+                else if (tag == "PastePattern")
+                    InputPattern.Text = await package.GetTextAsync();
+            }
         }
     }
 }

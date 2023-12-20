@@ -122,8 +122,8 @@
                             <coreControls:IconButton x:Name="OCRButton" Icon="&#xE8FE;" IsSquare="True" ToolTipService.ToolTip="OCR extract Text" Click="OCRButton_Click"/>
                         </StackPanel>
                         <StackPanel Orientation="Horizontal">
-                            <coreControls:IconButton Icon="&#xE7A7;" Tag="Undo" IsSquare="True" Corner="Left" ToolTipService.ToolTip="Undo Ctr+Z" Click="UndoButton_Click"/>
-                            <coreControls:IconButton Icon="&#xE7A6;" Tag="Redo" IsSquare="True" Corner="Right" ToolTipService.ToolTip="Redo Ctr+U" Click="UndoButton_Click"/>
+                            <coreControls:IconButton Icon="&#xE7A7;" Tag="Undo" IsSquare="True" Corner="Left" ToolTipService.ToolTip="Undo Ctr+Z" Click="UndoOrRedoButton_Click"/>
+                            <coreControls:IconButton Icon="&#xE7A6;" Tag="Redo" IsSquare="True" Corner="Right" ToolTipService.ToolTip="Redo Ctr+U" Click="UndoOrRedoButton_Click"/>
                         </StackPanel>
                         <coreControls:ThemeIconButton Name="SaveButton" Icon="&#xE74E;" Click="ControlButton_Click"/>
                     </StackPanel>
