@@ -138,9 +138,7 @@
                     </Grid>
                     <StackPanel Grid.Column="1" Orientation="Vertical" Name="ExtractInfomationArea" Spacing="10" Visibility="Visible">
                         <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="5" >
-                            <TextBox Name="InputPath" Header="Import" PlaceholderText="Type your path here"/>
                             <coreControls:IconButton Grid.Column="1" x:Name="LanguageButton" IsSquare="True" Icon="&#xF2B7;" Flyout="{StaticResource LanguageMenuFlyout}" VerticalAlignment="Bottom"/>
-                            <coreControls:IconButton Grid.Column="2" x:Name="PasteInputPath" Tag="PastePath" IsSquare="True" Icon="&#xE77F;" Click="PasteButton_Click" VerticalAlignment="Bottom"/>
                         </Grid>
 
                         <Grid ColumnDefinitions="*,Auto" ColumnSpacing="5">

@@ -24,13 +24,14 @@ using IOApp.Configs;
 using IOApp.Features;
 using System.Diagnostics;
 using System.IO;
-using static IOCore.Pages.About;
 using System.Net.Sockets;
 using IronOcr;
 using System.Text.RegularExpressions;
 using IronPython.Hosting;
 using Microsoft.Scripting.Hosting;
 using BitMiracle.LibTiff.Classic;
+using static IOCore.Pages.About;
+using static IOApp.Configs.Manage;
 
 namespace IOApp.Pages
 {
@@ -41,53 +42,8 @@ namespace IOApp.Pages
         public event PropertyChangedEventHandler PropertyChanged;
         private static readonly ResourceLoader _resourceLoader = ResourceLoader.GetForViewIndependentUse();
 
-        public enum ShapeType
-        {
-            Polyline,
-            Rectangle,
-            Ellipse
-        }
-
         public Dictionary<ShapeType, Control> SHAPES;
-        public enum LangType
-        {
-            English,
-            Vietnamese,
-            Chinese
-        }
-
         public Dictionary<LangType, Control> LANGUAGES;
-
-        public enum FilterType
-        {
-            _1977,
-            Aden,
-            Brannan,
-            Brooklyn,
-            Clarendon,
-            Earlybird,
-            Gingham,
-            Hudson,
-            Inkwell,
-            Kelvin,
-            Lark,
-            Lofi,
-            Maven,
-            Mayfair,
-            Moon,
-            Nashville,
-            Perpetua,
-            Reyes,
-            Rise,
-            Slumber,
-            Stinson,
-            Toaster,
-            Valencia,
-            Walden,
-            Willow,
-            Xpro2,
-        }
-
         public Dictionary<FilterType, RadioMenuFlyoutItem> FILTERS;
 
         public enum StatusType
@@ -102,7 +58,7 @@ namespace IOApp.Pages
         }
 
         public static readonly Dictionary<StatusType, string> STATUSES = new()
-		{
+        {
             { StatusType.Ready, "StatusReady" },
             { StatusType.Loading, "StatusLoading" },
             { StatusType.Loaded, "StatusLoaded" },
@@ -207,8 +163,6 @@ namespace IOApp.Pages
         private Mat _inpaintedImage;
         private Mat _sourceImage;
         private Mat _canvasImage = new();
-
-        private ThumbnailItem _tempFilterItem;
 
         public Main()
         {
@@ -360,9 +314,6 @@ namespace IOApp.Pages
 
             _imageHistory.Add(bitmap);
             _maskHistory.Add(new Mat(_canvasImage.Size(), MatType.CV_8U, -1));
-            // If select orther item => _tempFilterItem == null
-            if (_tempFilterItem == null)
-                _currentRevision = 0;
         }
 
         #region DRAWING_CANVAS
@@ -550,7 +501,6 @@ namespace IOApp.Pages
                         _currentRevision = 0;
 
                         CurrentItem = item;
-                        InputPath.Text = _currentItem.InputFilePath;
                         _sourceImage = new Mat(item.CacheImagePath);
 
                         RefreshPreviewBox();
@@ -1157,7 +1107,6 @@ namespace IOApp.Pages
                     _maskHistory.Clear();
                     _currentRevision = 0;
 
-                    InputPath.Text = _currentItem.InputFilePath;
                     _sourceImage = new Mat(_currentItem.TmpFilterPath);
 
                     RefreshPreviewBox();
@@ -1192,10 +1141,9 @@ namespace IOApp.Pages
         private void OCRButton_Click(object sender, RoutedEventArgs e)
         {
             if (sender is not Control control) return;
-            if (InputPath.Text == "") return;
 
             string pattern = InputPattern.Text;
-            string inputPath = InputPath.Text;
+            string inputPath = _currentItem.InputFilePath;
 
             IronTesseract IronOcr = new();
             IronOcr.Language = (LangType)LanguageButton.Tag switch
@@ -1236,9 +1184,7 @@ namespace IOApp.Pages
 
             if (package.Contains(StandardDataFormats.Text))
             {
-                if (tag == "PastePath")
-                    InputPath.Text = await package.GetTextAsync();
-                else if (tag == "PastePattern")
+                if (tag == "PastePattern")
                     InputPattern.Text = await package.GetTextAsync();
             }
         }
