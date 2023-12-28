@@ -208,8 +208,6 @@ namespace IOApp.Pages
         private Mat _sourceImage;
         private Mat _canvasImage = new();
 
-        private string _currentInputFilePath = "";
-        private string _tempOutputFilePath = "";
         private ThumbnailItem _tempFilterItem;
 
         public Main()
@@ -554,9 +552,6 @@ namespace IOApp.Pages
                         CurrentItem = item;
                         InputPath.Text = _currentItem.InputFilePath;
                         _sourceImage = new Mat(item.CacheImagePath);
-
-                        // If Select other Item in FileListView => _tempFilterItem = null
-                        _tempFilterItem = null;
 
                         RefreshPreviewBox();
 
@@ -1146,100 +1141,54 @@ namespace IOApp.Pages
             if (sender is not Control control) return;
             if (Utils.Any(_status, StatusType.Loading, StatusType.Processing)) return;
 
-            Status = StatusType.Loading;
-
             FilterButton.Tag = (control as RadioMenuFlyoutItem).Tag;
 
             string filterType = (control as RadioMenuFlyoutItem).Tag.ToString();
-            _currentInputFilePath = _currentItem.InputFilePath.ToString();
+            string inputImagePath = _currentItem.InputFilePath.ToString();
 
-            // TODO: Modify Output Path
-            _tempOutputFilePath = "D:\\Workspace\\University\\LVTN\\PythonCode\\Filters\\outputs\\danh" + filterType+ ".png";
-
-            RunCommandLine(_currentInputFilePath, _tempOutputFilePath, filterType.ToLower());
-
-            try
+            _currentItem.GenerateFilterFileIfNotExist(new Progress<bool>((bool result) =>
             {
-                var isFilePath = Utils.IsFilePath(_tempOutputFilePath);
-                if (isFilePath.GetValueOrDefault(false))
+                if (result)
                 {
-                    var imageMeta = ImageMagickUtils.GetMagickImageMeta(_tempOutputFilePath);
+                    _status = StatusType.Processing;
+                    RunCommandLine(_currentItem.InputFilePath, _currentItem.TmpFilterPath, filterType.ToLower());
 
-                    if (Profile.IsAcceptedInputFormat(imageMeta?.Format))
-                    {
-                        _tempFilterItem = new() { InputInfo = new(_tempOutputFilePath) };
-                    }
-                    else throw new();
+                    _imageHistory.Clear();
+                    _maskHistory.Clear();
+                    _currentRevision = 0;
+
+                    InputPath.Text = _currentItem.InputFilePath;
+                    _sourceImage = new Mat(_currentItem.TmpFilterPath);
+
+                    RefreshPreviewBox();
+
+                    EnableControlButton(PrevButton);
+                    EnableControlButton(NextButton);
+
+                    Status = StatusType.Loaded;
+
+                    GC.Collect();
+                    _ = AskForRate.Request(true, AskForRate.TimeTest, true, 10);
                 }
-            }
-            catch (Exception)
-            {
-            }
-
-            Status = StatusType.Loaded;
-            //_tempFilterItem.LoadImageCacheIfNotExist(true, new Progress<int>((int cacheImageLevel) =>
-            //{
-            //    if (cacheImageLevel > 0)
-            //    {
-            //        // TODO: Reload file after filtering
-            //        _sourceImage = new Mat(_tempFilterItem.CacheImagePath);
-
-            //        // TODO: Reload image to canvas, it is not working
-            //        RefreshPreviewBox();
-
-            //        EnableControlButton(PrevButton);
-            //        EnableControlButton(NextButton);
-
-            //        Status = StatusType.Loaded;
-
-            //        GC.Collect();
-            //        _ = AskForRate.Request(true, AskForRate.TimeTest, true, 10);
-            //    }
-            //    else
-            //    {
-            //        PreviewImage.Source = _currentBitmapImage = null;
-            //        CurrentItem = null;
-            //        Status = StatusType.LoadFailed;
-            //    }
-            //}));
-
+            }));
         }
 
         private void RunCommandLine(string inputPath, string outputPath, string filterType)
         {
             Process process = new Process();
 
-            // TODO: Modify python.exe, workingDirectory, filters.py 
+            // TODO: Modify python.exe, workingDirectory, filters.py
             process.StartInfo.FileName = @"C:\Users\Admin\miniconda3\python.exe";
             process.StartInfo.Arguments = @"filters.py " + filterType + " " + inputPath + " " + outputPath;
             process.StartInfo.WorkingDirectory = @"D:\Workspace\University\LVTN\PythonCode\Filters";
-            process.StartInfo.CreateNoWindow = false;
+            process.StartInfo.CreateNoWindow = true;
             process.StartInfo.UseShellExecute = false;
 
             process.Start();
             process.WaitForExit();
-            process.Close();
             process.Dispose();
         }
         
-        //private void PythonButton_Click(object sender, RoutedEventArgs e)
-        //{
-        //    string inputPath = @"D:\Workspace\University\LVTN\PythonCode\Filters\test.py";
-        //    var engine = Python.CreateEngine();
-        //    var scope = engine.CreateScope();
-
-        //    var script = engine.CreateScriptSourceFromFile(inputPath);
-
-        //    scope.SetVariable("input_path", "danh.png");
-        //    scope.SetVariable("output_dir", "text.txt");
-        //    script.Execute(scope);
-
-        //    //Đã lấy được result
-        //    dynamic result = scope.GetVariable("result");
-        //    Console.WriteLine("This Result: " + result);
-        //}
-
-
         private void OCRButton_Click(object sender, RoutedEventArgs e)
         {
             if (sender is not Control control) return;

@@ -50,6 +50,7 @@ namespace IOCore
         public static readonly string EXTERNAL_DIR = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Externals");
         public static readonly string APP_DIR = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), Package.Current.PublisherDisplayName, Package.Current.DisplayName);
         public static readonly string TEMP_DIR = Path.Combine(Path.GetTempPath(), Package.Current.PublisherDisplayName, Package.Current.DisplayName);
+        public static readonly string FILTER_DIR = Path.Combine(Path.GetTempPath(), "FILTER_DIR");
 
         //
 

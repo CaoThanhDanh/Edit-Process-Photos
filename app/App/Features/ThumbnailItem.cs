@@ -68,6 +68,9 @@ namespace IOApp.Features
         private int _cacheImageLevel = 0;
 
         [JsonIgnore]
+        public string TmpFilterPath { get; private set; }
+
+        [JsonIgnore]
         public int ThumbnailWidth { get => 160; }
         [JsonIgnore]
         public int ThumbnailHeight { get => Utils.Round((double)InputInfo.Height.GetValueOrDefault(160) / InputInfo.Width.GetValueOrDefault(160) * ThumbnailWidth); }
@@ -317,6 +320,48 @@ namespace IOApp.Features
                 catch 
                 {
                     progress.Report(_cacheImageLevel);
+                }
+            });
+        }
+
+        public void GenerateFilterFileIfNotExist(IProgress<bool> progress)
+        {
+            _ = Task.Run(() =>
+            {
+                try
+                {
+                    Directory.CreateDirectory(Meta.FILTER_DIR);
+
+                    if (TmpFilterPath == null || !Utils.IsExistFileOrDirectory(TmpFilterPath))
+                    {
+                        MagickImage image;
+
+                        var readSettings = new MagickReadSettings()
+                        {
+                            Format = InputInfo.Format,
+                            BackgroundColor = MagickColors.Transparent,
+                            ColorSpace = ColorSpace.sRGB
+                        };
+
+                        if (ImageMagickUtils.IsVectorFamily(InputInfo.Format))
+                            readSettings.Density = new(Utils.ComputeNeededDensityForSvg(InputInfo.Width.GetValueOrDefault(1), InputInfo.Height.GetValueOrDefault(1), 2048, 2048));
+
+                        image = new MagickImage(InputFilePath, readSettings);
+                        ImageMagickUtils.AutoOrient(image);
+
+                        var filePath = Path.Join(Meta.FILTER_DIR, Guid.NewGuid().ToString() + ".bmp");
+
+                        image.Write(filePath, MagickFormat.Bmp);
+                        image.Dispose();
+
+                        TmpFilterPath = filePath;
+                    }
+
+                    progress.Report(true);
+                }
+                catch
+                {
+                    progress.Report(false);
                 }
             });
         }

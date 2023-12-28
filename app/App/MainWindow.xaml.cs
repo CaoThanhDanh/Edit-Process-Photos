@@ -36,6 +36,7 @@ namespace IOApp
             SetTitleBar(AppTitleBar);
 
             Utils.DeleteFileOrDirectory(Meta.TEMP_DIR);
+            Utils.DeleteFileOrDirectory(Meta.FILTER_DIR);
 
             Status = StatusType.Ready;
         }
