@@ -136,7 +136,7 @@
                         </Canvas>
                         <ProgressRing Name="LoadingProgressRing" Width="40" Height="40" Visibility="Collapsed" IsActive="True" Foreground="{ThemeResource ProgressRingForeground}"/>
                     </Grid>
-                    <StackPanel Grid.Column="1" Orientation="Vertical" Name="ExtractInfomationArea" Spacing="10">
+                    <StackPanel Grid.Column="1" Orientation="Vertical" Name="ExtractInfomationArea" Spacing="10" Visibility="Visible">
                         <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="5" >
                             <TextBox Name="InputPath" Header="Import" PlaceholderText="Type your path here"/>
                             <coreControls:IconButton Grid.Column="1" x:Name="LanguageButton" IsSquare="True" Icon="&#xF2B7;" Flyout="{StaticResource LanguageMenuFlyout}" VerticalAlignment="Bottom"/>

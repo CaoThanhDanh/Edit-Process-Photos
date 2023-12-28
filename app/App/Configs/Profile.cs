@@ -109,14 +109,14 @@ namespace IOApp.Configs
             { OutputFormatFamily.Png,  new(true,  "PNG",      false, new[] { ".png" },  new[] { MagickFormat.Png }) },
             { OutputFormatFamily.Png8, new(true,  "PNG-8",    false, new[] { ".png" },  new[] { MagickFormat.Png8 }) },
             { OutputFormatFamily.Jpg,  new(true,  "JPG/JPEG", false, new[] { ".jpg" },  new[] { MagickFormat.Jpg }) },
-            { OutputFormatFamily.Gif,  new(true,  "GIF",      false, new[] { ".gif" },  new[] { MagickFormat.Gif }) },
+            //{ OutputFormatFamily.Gif,  new(true,  "GIF",      false, new[] { ".gif" },  new[] { MagickFormat.Gif }) },
             { OutputFormatFamily.Bmp,  new(true,  "BMP",      false, new[] { ".bmp" },  new[] { MagickFormat.Bmp }) },
-            { OutputFormatFamily.Ico,  new(true,  "ICO",      false, new[] { ".ico" },  new[] { MagickFormat.Ico }) },
+            //{ OutputFormatFamily.Ico,  new(true,  "ICO",      false, new[] { ".ico" },  new[] { MagickFormat.Ico }) },
             { OutputFormatFamily.Webp, new(true,  "WEBP",     false, new[] { ".webp" }, new[] { MagickFormat.WebP }) },
 
-            { OutputFormatFamily.Pbm,  new(true,  "PBM",      false, new[] { ".pbm" },  new[] { MagickFormat.Pbm }) },
-            { OutputFormatFamily.Pcx,  new(true,  "PCX",      false, new[] { ".pcx" },  new[] { MagickFormat.Pcx }) },
-            { OutputFormatFamily.Wbmp, new(true,  "WBMP",     false, new[] { ".wbmp" }, new[] { MagickFormat.Wbmp }) },
+            //{ OutputFormatFamily.Pbm,  new(true,  "PBM",      false, new[] { ".pbm" },  new[] { MagickFormat.Pbm }) },
+            //{ OutputFormatFamily.Pcx,  new(true,  "PCX",      false, new[] { ".pcx" },  new[] { MagickFormat.Pcx }) },
+            //{ OutputFormatFamily.Wbmp, new(true,  "WBMP",     false, new[] { ".wbmp" }, new[] { MagickFormat.Wbmp }) },
         };
 
         //
