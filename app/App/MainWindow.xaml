@@ -75,9 +75,9 @@
             </Grid>
 
             <Grid Grid.Row="2">
-                <NavigationView Name="PageNavigationView" PaneDisplayMode="Top" IsPaneVisible="False" Loaded="NavigationView_Loaded" SelectionChanged="NavigationView_SelectionChanged">
+                <NavigationView Name="PageNavigationView" PaneDisplayMode="LeftCompact" IsPaneVisible="False" Loaded="NavigationView_Loaded" SelectionChanged="NavigationView_SelectionChanged">
                     <NavigationView.MenuItems>
-                        <NavigationViewItem Tag="IOApp.Pages.Main"/>
+                        <NavigationViewItem Tag="IOApp.Pages.Main" Icon="Home"/>
                     </NavigationView.MenuItems>
                     <Frame x:Name="ContentFrame" Background="{ThemeResource PageBackground}"/>
                 </NavigationView>
