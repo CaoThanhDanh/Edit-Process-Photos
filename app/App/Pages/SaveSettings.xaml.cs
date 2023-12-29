@@ -164,84 +164,48 @@ namespace IOApp.Pages
             {
                 Utils.RevealInFileExplorer(storageFile.Path);
                 Status = status;
+                _dialog.Hide();
 
                 _ = AskForRate.Request(true, AskForRate.TimeTest, true, 2);
             });
 
-            if (ImageMagickUtils.IsVectorFamily(Item.InputInfo.Format))
+            _item.LoadImageCacheIfNotExist(false, new Progress<int>((int cacheImageLevel) =>
             {
-                _ = Task.Run(() =>
+                if (cacheImageLevel == 2)
                 {
-                    try
+                    _ = Task.Run(() =>
                     {
-                        // INPAINT 
-                        Cv2.Resize(_item.Mask, _item.Mask, _item.SourceImage.Size());
-                        _item.InpaintedImage = new Mat();
-                        Cv2.Inpaint(_item.SourceImage, _item.Mask, _item.InpaintedImage, 30, InpaintMethod.NS);
-                        var bitmap = BitmapConverter.ToBitmap(_item.InpaintedImage);
-
-                        // BITMAP TO MAGICK IMAGE
-                        MemoryStream ms = new MemoryStream();
-                        bitmap.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
-                        ms.Position = 0;
-                        var image = new MagickImage(ms);
-
-                        // SAVE WITH CONFIG
-                        ImageMagickUtils.AutoOrient(image);
-                        image.Quality = 100;
-                        image.Resize(width, height);
-                        image.Write(storageFile.Path);
-                        image.Dispose();
-                        bitmap.Dispose();
-
-                        progress.Report(Main.StatusType.Processed);
-                    }
-                    catch
-                    {
-                        progress.Report(Main.StatusType.ProcessFailed);
-                    }
-                });
-            }
-            else
-            {
-                Item.LoadImageCacheIfNotExist(false, new Progress<int>((int cacheImageLevel) =>
-                {
-                    if (cacheImageLevel == 2)
-                    {
-                        _ = Task.Run(() =>
+                        try
                         {
-                            try
-                            {
-                                // INPAINT 
-                                Cv2.Resize(_item.Mask, _item.Mask, _item.SourceImage.Size());
-                                _item.InpaintedImage = new Mat();
-                                Cv2.Inpaint(_item.SourceImage, _item.Mask, _item.InpaintedImage, 30, InpaintMethod.NS);
-                                var bitmap = BitmapConverter.ToBitmap(_item.InpaintedImage);
+                            // INPAINT 
+                            Cv2.Resize(_item.Mask, _item.Mask, _item.SourceImage.Size());
+                            _item.InpaintedImage = new Mat();
+                            Cv2.Inpaint(_item.SourceImage, _item.Mask, _item.InpaintedImage, 10, InpaintMethod.Telea);
+                            var bitmap = BitmapConverter.ToBitmap(_item.InpaintedImage);
 
-                                // BITMAP TO MAGICK IMAGE
-                                MemoryStream ms = new MemoryStream();
-                                bitmap.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
-                                ms.Position = 0;
-                                var image = new MagickImage(ms);
+                            // BITMAP TO MAGICK IMAGE
+                            MemoryStream memoryStream = new MemoryStream();
+                            bitmap.Save(memoryStream, System.Drawing.Imaging.ImageFormat.Png);
+                            memoryStream.Position = 0;
+                            var image = new MagickImage(memoryStream);
 
-                                // SAVE WITH CONFIG
-                                ImageMagickUtils.AutoOrient(image);
-                                image.Quality = 100;
-                                image.Resize(width, height);
-                                image.Write(storageFile.Path);
-                                image.Dispose();
-                                bitmap.Dispose();
+                            // SAVE WITH CONFIG
+                            ImageMagickUtils.AutoOrient(image);
+                            image.Quality = 100;
+                            image.Resize(width, height);
+                            image.Write(storageFile.Path);
+                            image.Dispose();
+                            bitmap.Dispose();
 
-                                progress.Report(Main.StatusType.Processed);
-                            }
-                            catch
-                            {
-                                progress.Report(Main.StatusType.ProcessFailed);
-                            }
-                        });
-                    }
-                }));
-            }
+                            progress.Report(Main.StatusType.Processed);
+                        }
+                        catch
+                        {
+                            progress.Report(Main.StatusType.ProcessFailed);
+                        }
+                    });
+                }
+            }));
         }
 
         private void CloseButton_Click(object sender, RoutedEventArgs e)

@@ -473,11 +473,6 @@ namespace IOApp.Pages
 
         #endregion
 
-        public void SelectIndex(int index)
-        {
-            FileListView.SelectedIndex = index;
-        }
-
         public void SelectItem(ThumbnailItem item)
         {
             if (!Utils.IsExistFileOrDirectory(item.InputFilePath))
@@ -1040,7 +1035,6 @@ namespace IOApp.Pages
         private void EnableAllControlButtons()
         {
             EnableControlButton(SaveButton);
-
             EnableControlButton(PrevButton);
             EnableControlButton(NextButton);
         }
@@ -1094,13 +1088,12 @@ namespace IOApp.Pages
             FilterButton.Tag = (control as RadioMenuFlyoutItem).Tag;
 
             string filterType = (control as RadioMenuFlyoutItem).Tag.ToString();
-            string inputImagePath = _currentItem.InputFilePath.ToString();
 
             _currentItem.GenerateFilterFileIfNotExist(new Progress<bool>((bool result) =>
             {
                 if (result)
                 {
-                    _status = StatusType.Processing;
+                    Status = StatusType.Processing;
                     RunCommandLine(_currentItem.InputFilePath, _currentItem.TmpFilterPath, filterType.ToLower());
 
                     _imageHistory.Clear();
@@ -1141,6 +1134,7 @@ namespace IOApp.Pages
         private void OCRButton_Click(object sender, RoutedEventArgs e)
         {
             if (sender is not Control control) return;
+            if (Utils.Any(_status, StatusType.Loading, StatusType.Processing)) return;
 
             string pattern = InputPattern.Text;
             string inputPath = _currentItem.InputFilePath;
@@ -1154,15 +1148,32 @@ namespace IOApp.Pages
                 _ => OcrLanguage.English,
             };
 
-            OCROutput.Text = IronOcr.Read(inputPath).Text;
-
-            if (OCROutput.Text != "" && pattern != "")
+            IProgress<string> progress = new Progress<string>(result =>
             {
-                Regex regex = new Regex(pattern);
-                Match match = regex.Match(OCROutput.Text);
-                if (match.Success)
-                    OCRSpecificOutput.Text = match.Value;
-            }
+                OCROutput.Text = result;
+                if (OCROutput.Text != "" && pattern != "")
+                {
+                    Regex regex = new Regex(pattern);
+                    Match match = regex.Match(OCROutput.Text);
+                    if (match.Success)
+                        OCRSpecificOutput.Text = match.Value;
+                }
+                Status = StatusType.Processed;
+            });
+
+            Status = StatusType.Processing;
+            _ = Task.Run(() =>
+            {
+                try
+                {
+                    string extractedText = IronOcr.Read(inputPath).Text;
+                    progress.Report(extractedText);
+                }
+                catch 
+                {
+                    progress.Report("");
+                }
+            });
         }
 
         private void CopyButton_Click(object sender, RoutedEventArgs e)
