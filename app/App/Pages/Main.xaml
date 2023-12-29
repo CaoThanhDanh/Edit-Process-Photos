@@ -171,7 +171,7 @@
                         </Grid>
 
                         <Grid Grid.Row="3" HorizontalAlignment="Center">
-                            <coreControls:IconTextButton Icon="&#xEE6F;" Text="Extract" Click="OCRButton_Click"/>
+                            <coreControls:IconTextButton Icon="&#xEE6F;" Text="Extract" Click="ExtractButton_Click"/>
                         </Grid>
                     </Grid>
                 </Grid>

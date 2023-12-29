@@ -23,15 +23,11 @@ using IOCore.Libs;
 using IOApp.Configs;
 using IOApp.Features;
 using System.Diagnostics;
-using System.IO;
-using System.Net.Sockets;
 using IronOcr;
 using System.Text.RegularExpressions;
 using IronPython.Hosting;
-using Microsoft.Scripting.Hosting;
-using BitMiracle.LibTiff.Classic;
-using static IOCore.Pages.About;
 using static IOApp.Configs.Manage;
+using System.Net;
 
 namespace IOApp.Pages
 {
@@ -207,6 +203,8 @@ namespace IOApp.Pages
         private Mat _inpaintedImage;
         private Mat _sourceImage;
         private Mat _canvasImage = new();
+
+        private IronTesseract IronOcr = new();
 
         public Main()
         {
@@ -503,9 +501,29 @@ namespace IOApp.Pages
         {
             if (_isCanvasDrawing)
             {
-                if (_startPoint != e.GetCurrentPoint(CanvasDrawing).Position)
-                    InpaintImage(e.GetCurrentPoint(CanvasDrawing).Position);
-                _isCanvasDrawing = false;
+                if (_mode != ModeType.OCR)
+                {
+                    if (_startPoint != e.GetCurrentPoint(CanvasDrawing).Position)
+                        InpaintImage(e.GetCurrentPoint(CanvasDrawing).Position);
+                    _isCanvasDrawing = false;
+                }
+                else if (_mode == ModeType.OCR && (ShapeType)ShapeButton.Tag == ShapeType.Rectangle)
+                {
+                    CanvasDrawing.Children.Remove(_shape);
+
+                    var endpoint = e.GetCurrentPoint(CanvasDrawing).Position;
+                    double ratio = (double)_sourceImage.Width / (double)_canvasImage.Width;
+
+                    var x = Math.Min(endpoint.X, _startPoint.X);
+                    var y = Math.Min(endpoint.Y, _startPoint.Y);
+
+                    var width = Math.Max(endpoint.X, _startPoint.X) - x;
+                    var height = Math.Max(endpoint.Y, _startPoint.Y) - y;
+
+                    _currentItem.CropRect = Tuple.Create((int)(x * ratio), (int)(y * ratio), (int)(width * ratio), (int)(height * ratio));
+
+                    ExtractFromImage(false);
+                }
             }
         }
 
@@ -1198,22 +1216,18 @@ namespace IOApp.Pages
             process.Dispose();
         }
         
-        private void OCRButton_Click(object sender, RoutedEventArgs e)
+        private void ExtractButton_Click(object sender, RoutedEventArgs e)
         {
             if (sender is not Control control) return;
             if (Utils.Any(_status, StatusType.Loading, StatusType.Processing)) return;
 
+            ExtractFromImage(true);
+        }
+
+        private void ExtractFromImage(bool isFull)
+        {
             string pattern = InputPattern.Text;
             string inputPath = _currentItem.InputFilePath;
-
-            IronTesseract IronOcr = new();
-            IronOcr.Language = (LangType)LanguageButton.Tag switch
-            {
-                LangType.English    => OcrLanguage.English,
-                LangType.Vietnamese => OcrLanguage.Vietnamese,
-                LangType.Chinese    => OcrLanguage.ChineseSimplifiedFast,
-                _ => OcrLanguage.English,
-            };
 
             IProgress<string> progress = new Progress<string>(result =>
             {
@@ -1229,14 +1243,33 @@ namespace IOApp.Pages
             });
 
             Status = StatusType.Processing;
+
+            IronOcr.Language = (LangType)LanguageButton.Tag switch
+            {
+                LangType.English => OcrLanguage.English,
+                LangType.Vietnamese => OcrLanguage.Vietnamese,
+                LangType.Chinese => OcrLanguage.ChineseSimplifiedFast,
+                _ => OcrLanguage.English,
+            };
+
             _ = Task.Run(() =>
             {
                 try
                 {
-                    string extractedText = IronOcr.Read(inputPath).Text;
-                    progress.Report(extractedText);
+                    if (isFull)
+                    {
+                        string extractedText = IronOcr.Read(inputPath).Text;
+                        progress.Report(extractedText);
+                    }
+                    else
+                    {
+                        var ocrInput = BitmapUtils.CropImage(_currentItem.CropRect, inputPath);
+
+                        string extractedText = IronOcr.Read(ocrInput).Text;
+                        progress.Report(extractedText);
+                    }
                 }
-                catch 
+                catch
                 {
                     progress.Report("");
                 }

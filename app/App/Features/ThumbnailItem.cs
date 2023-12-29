@@ -70,6 +70,8 @@ namespace IOApp.Features
         [JsonIgnore]
         public string TmpFilterPath { get; private set; }
 
+        public Tuple<int, int, int, int> CropRect { get; set; }
+
         [JsonIgnore]
         public int ThumbnailWidth { get => 160; }
         [JsonIgnore]
