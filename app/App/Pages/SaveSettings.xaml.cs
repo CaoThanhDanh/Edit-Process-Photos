@@ -30,6 +30,7 @@ namespace IOApp.Pages
 
         public event PropertyChangedEventHandler PropertyChanged;
         private static readonly ResourceLoader _resourceLoader = ResourceLoader.GetForViewIndependentUse();
+        private Manage.ModeType _mode => Main.Inst.Mode;
 
         public ContentDialog _dialog;
 
@@ -169,9 +170,9 @@ namespace IOApp.Pages
                 _ = AskForRate.Request(true, AskForRate.TimeTest, true, 2);
             });
 
-            _item.LoadImageCacheIfNotExist(false, new Progress<int>((int cacheImageLevel) =>
+            if (_mode == Manage.ModeType.Inpaint)
             {
-                if (cacheImageLevel == 2)
+                _item.LoadImageCacheIfNotExist(false, new Progress<int>((int cacheImageLevel) =>
                 {
                     _ = Task.Run(() =>
                     {
@@ -204,8 +205,29 @@ namespace IOApp.Pages
                             progress.Report(Main.StatusType.ProcessFailed);
                         }
                     });
-                }
-            }));
+                }));
+            }
+            else if (_mode == Manage.ModeType.Filter) 
+            {
+                _ = Task.Run(() =>
+                {
+                    try
+                    {
+                        MagickImage image = new MagickImage(_item.TmpFilterPath);
+                        MagickImage copiedImage = (MagickImage)image.Clone();
+                        copiedImage.Write(storageFile.Path);
+                        image.Dispose();
+                        copiedImage.Dispose();
+
+                        progress.Report(Main.StatusType.Processed);
+
+                    }
+                    catch 
+                    {
+                        progress.Report(Main.StatusType.ProcessFailed);
+                    }
+                });
+            }
         }
 
         private void CloseButton_Click(object sender, RoutedEventArgs e)
