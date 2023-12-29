@@ -21,10 +21,16 @@
         <coreLibs:FilePathConverter x:Key="FilePathConverter"/>
         <coreLibs:InverseBoolConverter x:Key="InverseBoolConverter"/>
 
+        <MenuFlyout x:Key="ModeMenuFlyout" Placement="Bottom">
+            <RadioMenuFlyoutItem Name="InpaintModeMenuFlyoutItem"       Click="ModeButton_Click"/>
+            <RadioMenuFlyoutItem Name="FilterModeMenuFlyoutItem"        Click="ModeButton_Click"/>
+            <RadioMenuFlyoutItem Name="OCRModeMenuFlyoutItem"           Click="ModeButton_Click"/>
+        </MenuFlyout>
+        
         <MenuFlyout x:Key="ShapeMenuFlyout" Placement="Bottom">
-            <RadioMenuFlyoutItem Name="LineShapeMenuFlyoutItem" Click="ShapeButton_Click"/>
-            <RadioMenuFlyoutItem Name="RectangleShapeMenuFlyoutItem" Click="ShapeButton_Click"/>
-            <RadioMenuFlyoutItem Name="EllipseShapeMenuFlyoutItem" Click="ShapeButton_Click"/>
+            <RadioMenuFlyoutItem Name="LineShapeMenuFlyoutItem"         Click="ShapeButton_Click"/>
+            <RadioMenuFlyoutItem Name="RectangleShapeMenuFlyoutItem"    Click="ShapeButton_Click"/>
+            <RadioMenuFlyoutItem Name="EllipseShapeMenuFlyoutItem"      Click="ShapeButton_Click"/>
         </MenuFlyout>
 
         <MenuFlyout x:Key="FilterMenuFlyout" Placement="Bottom">
@@ -106,7 +112,6 @@
     <!--MAIN_LAYOUT-->
     <Grid>
         <Grid Name="WorkBox" ColumnDefinitions="*,250">
-
             <Grid RowDefinitions="Auto,*" RowSpacing="10" Padding="10">
                 <Grid ColumnDefinitions="Auto,*,Auto">
                     <StackPanel Orientation="Horizontal">
@@ -114,19 +119,28 @@
                         <coreControls:IconButton Icon="&#xE713;" IsSquare="True" Corner="Right" Flyout="{StaticResource SettingsFlyout}"/>
                     </StackPanel>
 
-                    <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="10">
-                        <StackPanel>
-                            <coreControls:IconButton x:Name="FilterButton" Icon="&#xF4A5;" IsSquare="True" ToolTipService.ToolTip="Filter" Flyout="{StaticResource FilterMenuFlyout}"/>
-                        </StackPanel>
-                        <StackPanel>
-                            <coreControls:IconButton x:Name="OCRButton" Icon="&#xE8FE;" IsSquare="True" ToolTipService.ToolTip="OCR extract Text" Click="OCRButton_Click"/>
-                        </StackPanel>
-                        <StackPanel Orientation="Horizontal">
-                            <coreControls:IconButton Icon="&#xE7A7;" Tag="Undo" IsSquare="True" Corner="Left" ToolTipService.ToolTip="Undo Ctr+Z" Click="UndoOrRedoButton_Click"/>
-                            <coreControls:IconButton Icon="&#xE7A6;" Tag="Redo" IsSquare="True" Corner="Right" ToolTipService.ToolTip="Redo Ctr+U" Click="UndoOrRedoButton_Click"/>
-                        </StackPanel>
-                        <coreControls:ThemeIconButton Name="SaveButton" Icon="&#xE74E;" Click="ControlButton_Click"/>
+                    <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center">
+                        <coreControls:IconTextButton x:Name="ModeButton" Flyout="{StaticResource ModeMenuFlyout}"/>
                     </StackPanel>
+
+                    <Grid ColumnDefinitions="180" Grid.Column="2">
+                        <Grid Name="EditMenuArea" ColumnDefinitions="*,Auto" ColumnSpacing="5" HorizontalAlignment="Right">
+                            <StackPanel Orientation="Horizontal" Spacing="5">
+                                <StackPanel>
+                                    <coreControls:IconButton x:Name="FilterButton" Icon="&#xF4A5;" IsSquare="True" ToolTipService.ToolTip="Filter" Flyout="{StaticResource FilterMenuFlyout}"/>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal">
+                                    <coreControls:IconButton x:Name="UndoButton" Icon="&#xE7A7;" Tag="Undo" IsSquare="True" Corner="Left" ToolTipService.ToolTip="Undo Ctr+Z" Click="UndoOrRedoButton_Click"/>
+                                    <coreControls:IconButton x:Name="RedoButton" Icon="&#xE7A6;" Tag="Redo" IsSquare="True" Corner="Right" ToolTipService.ToolTip="Redo Ctr+U" Click="UndoOrRedoButton_Click"/>
+                                </StackPanel>
+                                <coreControls:ThemeIconButton Name="SaveButton" Icon="&#xE74E;" Click="ControlButton_Click"/>
+                            </StackPanel>
+                        </Grid>
+
+                        <Grid Name="ExtractMenuArea" ColumnDefinitions="*,Auto" ColumnSpacing="5" HorizontalAlignment="Right">
+                            <coreControls:IconButton Grid.Column="1" x:Name="LanguageButton" IsSquare="True" Icon="&#xF2B7;" Flyout="{StaticResource LanguageMenuFlyout}" VerticalAlignment="Bottom"/>
+                        </Grid>
+                    </Grid>
                 </Grid>
 
                 <Grid Grid.Row="1" ColumnDefinitions="*,300">
@@ -137,10 +151,6 @@
                         <ProgressRing Name="LoadingProgressRing" Width="40" Height="40" Visibility="Collapsed" IsActive="True" Foreground="{ThemeResource ProgressRingForeground}"/>
                     </Grid>
                     <StackPanel Grid.Column="1" Orientation="Vertical" Name="ExtractInfomationArea" Spacing="10" Visibility="Visible">
-                        <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="5" >
-                            <coreControls:IconButton Grid.Column="1" x:Name="LanguageButton" IsSquare="True" Icon="&#xF2B7;" Flyout="{StaticResource LanguageMenuFlyout}" VerticalAlignment="Bottom"/>
-                        </Grid>
-
                         <Grid ColumnDefinitions="*,Auto" ColumnSpacing="5">
                             <TextBox Name="InputPattern" Header="Pattern" PlaceholderText="Type your pattern here"/>
                             <coreControls:IconButton Grid.Column="1" x:Name="PastePattern" Tag="PastePattern" IsSquare="True" Icon="&#xE77F;" Click="PasteButton_Click" VerticalAlignment="Bottom"/>

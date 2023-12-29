@@ -9,6 +9,13 @@ namespace IOApp.Configs
 {
     internal class Manage
     {
+        public enum ModeType
+        {
+            Inpaint,
+            Filter,
+            OCR
+        }
+
         public enum StatusType
         {
             Ready,

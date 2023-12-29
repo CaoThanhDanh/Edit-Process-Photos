@@ -42,6 +42,7 @@ namespace IOApp.Pages
         public event PropertyChangedEventHandler PropertyChanged;
         private static readonly ResourceLoader _resourceLoader = ResourceLoader.GetForViewIndependentUse();
 
+        public Dictionary<ModeType, Control> MODES;
         public Dictionary<ShapeType, Control> SHAPES;
         public Dictionary<LangType, Control> LANGUAGES;
         public Dictionary<FilterType, RadioMenuFlyoutItem> FILTERS;
@@ -130,6 +131,44 @@ namespace IOApp.Pages
         }
 
         public string StatusText => _resourceLoader.GetString(STATUSES[_status]);
+
+        private ModeType _mode;
+
+        public ModeType Mode
+        {
+            get => _mode;
+            set
+            {
+                _mode = value;
+                PropertyChanged?.Invoke(this, new(nameof(Mode)));
+
+                if (_mode == ModeType.Inpaint)
+                {
+                    EditMenuArea.Visibility = Visibility.Visible;
+                    ExtractMenuArea.Visibility = Visibility.Collapsed;
+
+                    UndoButton.IsEnabled = true;
+                    RedoButton.IsEnabled = true;
+
+                    FilterButton.Visibility = Visibility.Collapsed;
+                }
+                else if (_mode == ModeType.Filter)
+                {
+                    EditMenuArea.Visibility = Visibility.Visible;
+                    ExtractMenuArea.Visibility = Visibility.Collapsed;
+
+                    UndoButton.IsEnabled = false;
+                    RedoButton.IsEnabled = false;
+
+                    FilterButton.Visibility = Visibility.Visible;
+                }
+                else if (_mode == ModeType.OCR)
+                {
+                    EditMenuArea.Visibility = Visibility.Collapsed;
+                    ExtractMenuArea.Visibility = Visibility.Visible;
+                }
+            }
+        }
 
         private FileOpenPicker _inputFilesPicker;
 
@@ -930,6 +969,29 @@ namespace IOApp.Pages
 
             //
 
+            MODES = new()
+            {
+                { ModeType.Inpaint,         InpaintModeMenuFlyoutItem },
+                { ModeType.Filter,          FilterModeMenuFlyoutItem },
+                { ModeType.OCR,             OCRModeMenuFlyoutItem }
+            };
+
+            InpaintModeMenuFlyoutItem.Text = "Inpaint";
+            InpaintModeMenuFlyoutItem.Tag = ModeType.Inpaint;
+
+            FilterModeMenuFlyoutItem.Text = "Filter";
+            FilterModeMenuFlyoutItem.Tag = ModeType.Filter;
+            
+            OCRModeMenuFlyoutItem.Text = "OCR";
+            OCRModeMenuFlyoutItem .Tag = ModeType.OCR;
+
+            InpaintModeMenuFlyoutItem.IsChecked = true;
+            ModeButton.Text = InpaintModeMenuFlyoutItem.Text;
+
+            Mode = ModeType.Inpaint;
+
+            //
+
             SHAPES = new()
             {
                 { ShapeType.Polyline,      LineShapeMenuFlyoutItem },
@@ -1198,6 +1260,13 @@ namespace IOApp.Pages
                 if (tag == "PastePattern")
                     InputPattern.Text = await package.GetTextAsync();
             }
+        }
+
+        private void ModeButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is not RadioMenuFlyoutItem control) return;
+            ModeButton.Text = control.Text;
+            Mode = (ModeType)control.Tag;
         }
     }
 }
