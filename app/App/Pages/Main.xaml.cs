@@ -142,30 +142,35 @@ namespace IOApp.Pages
                 _mode = value;
                 PropertyChanged?.Invoke(this, new(nameof(Mode)));
 
-                if (_mode == ModeType.Inpaint)
+                if (Utils.Any(_mode, ModeType.Inpaint, ModeType.Filter))
                 {
                     EditMenuArea.Visibility = Visibility.Visible;
-                    ExtractMenuArea.Visibility = Visibility.Collapsed;
 
+                    ExtractInfomationArea.Visibility = Visibility.Collapsed;
+                    ExtractMenuArea.Visibility = Visibility.Collapsed;
+                }
+                else
+                {
+                    EditMenuArea.Visibility = Visibility.Collapsed;
+
+                    ExtractInfomationArea.Visibility = Visibility.Visible;
+                    ExtractMenuArea.Visibility = Visibility.Visible;
+                }
+
+                if (_mode == ModeType.Inpaint)
+                {
                     UndoButton.IsEnabled = true;
                     RedoButton.IsEnabled = true;
-
                     FilterButton.Visibility = Visibility.Collapsed;
                 }
                 else if (_mode == ModeType.Filter)
                 {
-                    EditMenuArea.Visibility = Visibility.Visible;
-                    ExtractMenuArea.Visibility = Visibility.Collapsed;
-
                     UndoButton.IsEnabled = false;
                     RedoButton.IsEnabled = false;
-
                     FilterButton.Visibility = Visibility.Visible;
                 }
                 else if (_mode == ModeType.OCR)
                 {
-                    EditMenuArea.Visibility = Visibility.Collapsed;
-                    ExtractMenuArea.Visibility = Visibility.Visible;
                 }
             }
         }

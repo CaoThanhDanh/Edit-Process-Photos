@@ -143,37 +143,37 @@
                     </Grid>
                 </Grid>
 
-                <Grid Grid.Row="1" ColumnDefinitions="*,300">
+                <Grid Grid.Row="1" ColumnDefinitions="*,Auto" ColumnSpacing="5">
                     <Grid Name="PreviewBox" SizeChanged="PreviewBox_SizeChanged">
                         <Canvas Name="CanvasDrawing" PointerPressed="Canvas_PointerPressed" PointerMoved="Canvas_PointerMoved" PointerReleased="Canvas_PointerReleased" PointerExited="Canvas_PointerExited">
                             <Image Name="PreviewImage"/>
                         </Canvas>
                         <ProgressRing Name="LoadingProgressRing" Width="40" Height="40" Visibility="Collapsed" IsActive="True" Foreground="{ThemeResource ProgressRingForeground}"/>
                     </Grid>
-                    <StackPanel Grid.Column="1" Orientation="Vertical" Name="ExtractInfomationArea" Spacing="10" Visibility="Visible">
+                    <Grid Name="ExtractInfomationArea" Grid.Column="1" RowDefinitions="Auto,Auto,Auto,Auto" RowSpacing="5" Width="300" Visibility="Collapsed">
                         <Grid ColumnDefinitions="*,Auto" ColumnSpacing="5">
                             <TextBox Name="InputPattern" Header="Pattern" PlaceholderText="Type your pattern here"/>
                             <coreControls:IconButton Grid.Column="1" x:Name="PastePattern" Tag="PastePattern" IsSquare="True" Icon="&#xE77F;" Click="PasteButton_Click" VerticalAlignment="Bottom"/>
                         </Grid>
                         
-                        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="5">
+                        <Grid Grid.Row="1" ColumnDefinitions="*,Auto" ColumnSpacing="5">
                             <TextBox Name="OCROutput" Header="All" IsEnabled="True" 
                                      MaxHeight="245" AcceptsReturn="True" TextWrapping="Wrap" 
                                      ScrollViewer.VerticalScrollBarVisibility="Auto"/>
                             <coreControls:IconButton Grid.Column="1" x:Name="CopyAllButton" Tag ="CopyAll" Icon="&#xE8C8;" IsSquare="True" ToolTipService.ToolTip="Copy all extracted info" Click="CopyButton_Click" VerticalAlignment="Bottom"/>
                         </Grid>
                         
-                        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="5">
+                        <Grid Grid.Row="2" ColumnDefinitions="*,Auto" ColumnSpacing="5">
                             <TextBox Name="OCRSpecificOutput" Header="Specific" IsEnabled="True"
                                      MaxHeight="245" AcceptsReturn="True" TextWrapping="Wrap" 
                                      ScrollViewer.VerticalScrollBarVisibility="Auto"/>
                             <coreControls:IconButton Grid.Column="1" x:Name="CopySpecificButton" Tag ="CopySpecific" Icon="&#xE8C8;" IsSquare="True" ToolTipService.ToolTip="Copy all specific info" Click="CopyButton_Click" VerticalAlignment="Bottom"/>
                         </Grid>
 
-                        <Grid HorizontalAlignment="Center">
+                        <Grid Grid.Row="3" HorizontalAlignment="Center">
                             <coreControls:IconTextButton Icon="&#xEE6F;" Text="Extract" Click="OCRButton_Click"/>
                         </Grid>
-                    </StackPanel>
+                    </Grid>
                 </Grid>
             </Grid>
 
